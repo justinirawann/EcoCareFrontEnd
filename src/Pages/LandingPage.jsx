@@ -57,7 +57,7 @@ function LandingPage() {
             <img
               src="/ecocare.jpg"
               alt="EcoCare Hero"
-              className="w-full max-w-md"
+              className="w-full max-w-xl md:max-w-2xl lg:max-w-3xl drop-shadow-2xl"
             />
           </div>
 

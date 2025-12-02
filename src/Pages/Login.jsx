@@ -1,52 +1,121 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login:', formData)
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || "Login gagal")
+        return
+      }
+
+      
+      localStorage.setItem("token", data.token)
+      localStorage.setItem("user", JSON.stringify(data.user))
+
+      alert("Login berhasil!")
+      navigate("/dashboard")
+    } catch (error) {
+      console.error(error)
+      alert("Server error!")
+    }
   }
 
+
   return (
-    <div className="min-h-screen bg-green-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-800 text-center mb-6">Masuk ke EcoCare</h2>
+    <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center px-4">
+      
+      <div className="relative bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-green-100">
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-4 left-4 text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1 transition"
+        >
+          ← Kembali
+        </button>
+
+        {/* Logo / Brand */}
+        <div className="text-center mb-6 mt-4">
+          <h1 className="text-3xl font-extrabold text-green-700">EcoCare</h1>
+          <p className="text-gray-500 mt-1">
+            Masuk untuk lanjutkan peduli lingkungan 🌱
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          
+          {/* Email */}
           <div>
-            <label className="block text-gray-700 mb-2">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               type="email"
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="contoh@email.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               required
             />
           </div>
-          
+
+          {/* Password */}
           <div>
-            <label className="block text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               type="password"
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Masukkan password"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               required
             />
           </div>
-          
+
+          {/* Button */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+            className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 active:scale-95 transition duration-150"
           >
             Masuk
           </button>
         </form>
-        
-        <p className="text-center mt-4 text-gray-600">
-          Belum punya akun? <Link to="/register" className="text-green-600 hover:underline">Daftar</Link>
+
+        {/* Register */}
+        <p className="text-center mt-6 text-gray-600 text-sm">
+          Belum punya akun?{" "}
+          <Link
+            to="/register"
+            className="text-green-600 font-semibold hover:underline"
+          >
+            Daftar Sekarang
+          </Link>
         </p>
       </div>
     </div>
