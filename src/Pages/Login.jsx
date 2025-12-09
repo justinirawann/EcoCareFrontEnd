@@ -6,7 +6,7 @@ function Login() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
@@ -15,30 +15,40 @@ function Login() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
+        body: JSON.stringify(formData),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Login gagal")
-        return
+        alert(data.message || "Login gagal");
+        return;
       }
 
-      
-      localStorage.setItem("token", data.token)
-      localStorage.setItem("user", JSON.stringify(data.user))
+      // Simpan token & user
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Login berhasil!")
-      navigate("/dashboard")
+      // Ambil role pertama dari array
+      const roles = data.user.roles || [];
+      const role = roles.length > 0 ? roles[0] : null;
+
+      // Redirect sesuai role
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "petugas") {
+        navigate("/petugas/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+
     } catch (error) {
-      console.error(error)
-      alert("Server error!")
+      console.error(error);
+      alert("Server error!");
     }
-  }
+  };
+
+
 
 
   return (
