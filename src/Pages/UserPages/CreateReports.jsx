@@ -18,7 +18,7 @@ function CreateReports() {
       return
     }
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token")
 
     const formData = new FormData()
     formData.append("title", title)

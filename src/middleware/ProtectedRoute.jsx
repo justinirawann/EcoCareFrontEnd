@@ -6,7 +6,7 @@ function ProtectedRoute({ children }) {
   const [authorized, setAuthorized] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     if (!token) {
       setAuthorized(false)
       setLoading(false)
@@ -23,13 +23,16 @@ function ProtectedRoute({ children }) {
       .then((res) => res.json())
       .then((data) => {
         if (data?.id) {
-          // Jika sukses → simpan user ke localStorage
-          localStorage.setItem("user", JSON.stringify(data))
+          // Jika sukses → simpan user ke storage yang sama dengan token
+          const storage = localStorage.getItem("token") ? localStorage : sessionStorage
+          storage.setItem("user", JSON.stringify(data))
           setAuthorized(true)
         } else {
           setAuthorized(false)
           localStorage.removeItem("token")
           localStorage.removeItem("user")
+          sessionStorage.removeItem("token")
+          sessionStorage.removeItem("user")
         }
         setLoading(false)
       })

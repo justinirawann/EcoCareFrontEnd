@@ -11,7 +11,7 @@ function MyReports() {
   }, [])
 
   const fetchMyReports = async () => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
       const response = await fetch("http://127.0.0.1:8000/api/reports/my-reports", {
         headers: { Authorization: `Bearer ${token}` },

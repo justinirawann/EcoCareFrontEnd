@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom"
 
 function RoleRoute({ children, allowedRoles = [] }) {
-  const user = JSON.parse(localStorage.getItem("user"))
+  const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
   const roles = user?.roles || []
 
   // Jika user tidak punya salah satu role yang dibutuhkan

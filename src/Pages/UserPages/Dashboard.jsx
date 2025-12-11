@@ -1,17 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 function Dashboard() {
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user"))
+    const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
     setUser(savedUser)
   }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("user")
     window.location.href = "/login"
   }
 
@@ -36,8 +39,18 @@ function Dashboard() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
-          <h2 className="text-3xl font-bold mb-2">Bersama Jaga Lingkungan! 🌍</h2>
-          <p className="text-green-100">Laporkan sampah, pantau status, dan berkontribusi untuk lingkungan yang lebih bersih</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Bersama Jaga Lingkungan! 🌍</h2>
+              <p className="text-green-100">Laporkan sampah, pantau status, dan berkontribusi untuk lingkungan yang lebih bersih</p>
+            </div>
+            <button
+              onClick={() => navigate("/dashboard/edit-profile")}
+              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+            >
+              👤 Edit Profile
+            </button>
+          </div>
         </div>
 
         {/* Main Features */}

@@ -1,8 +1,8 @@
 import { Navigate } from "react-router-dom"
 
 function GuestRoute({ children }) {
-  const token = localStorage.getItem("token")
-  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+  const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
 
   // Jika sudah login, redirect ke dashboard sesuai role
   if (token) {

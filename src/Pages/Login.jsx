@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" })
+  const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -25,9 +26,10 @@ function Login() {
         return;
       }
 
-      // Simpan token & user
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Simpan token & user berdasarkan Remember Me
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("token", data.token);
+      storage.setItem("user", JSON.stringify(data.user));
 
       // Ambil role pertama dari array
       const roles = data.user.roles || [];
@@ -106,6 +108,20 @@ function Login() {
               }
               required
             />
+          </div>
+
+          {/* Remember Me */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
+              Ingat saya
+            </label>
           </div>
 
           {/* Button */}

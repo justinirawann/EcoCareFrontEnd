@@ -5,10 +5,12 @@ import Register from "./Pages/Register"
 import Dashboard from "./Pages/UserPages/Dashboard"
 import AdminDashboard from "./Pages/AdminPages/AdminDashboard"
 import ManageReports from "./Pages/AdminPages/ManageReports"
+import CreatePetugas from "./Pages/AdminPages/CreatePetugas"
 import PetugasDashboard from "./Pages/PetugasPages/PetugasDashboard"
 import CreateReports from "./Pages/UserPages/CreateReports"
 import MyReports from "./Pages/UserPages/MyReports"
 import EditReport from "./Pages/UserPages/EditReport"
+import EditProfile from "./Pages/UserPages/EditProfile"
 
 
 import ProtectedRoute from "./middleware/ProtectedRoute"
@@ -69,6 +71,17 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/dashboard/edit-profile"            
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["user"]}>
+                <EditProfile />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
         {/* ADMIN */}
         <Route
           path="/admin/dashboard"
@@ -92,6 +105,17 @@ function AppRoutes() {
           }
         />
 
+        <Route
+          path="/admin/create-petugas"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["admin"]}>
+                <CreatePetugas />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
         {/* PETUGAS */}
         <Route
           path="/petugas/dashboard"
@@ -104,6 +128,7 @@ function AppRoutes() {
           }
         />
 
+        <Route path="/test-profile" element={<div>Test Profile Page</div>} />
         <Route path="/forbidden" element={<h1>Akses Ditolak</h1>} />
       </Routes>
     </Router>

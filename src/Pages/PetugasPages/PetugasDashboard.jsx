@@ -4,13 +4,15 @@ function PetugasDashboard() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user"))
+    const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
     setUser(savedUser)
   }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("user")
     window.location.href = "/login"
   }
 

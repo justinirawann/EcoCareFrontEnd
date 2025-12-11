@@ -7,13 +7,15 @@ function AdminDashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user"))
+    const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
     setUser(savedUser)
   }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("user")
     window.location.href = "/login"
   }
 
@@ -39,10 +41,13 @@ function AdminDashboard() {
             </p>
           </div>
 
-          <div className="p-6 border rounded-xl bg-green-100">
-            <h3 className="text-lg font-semibold text-green-700">Manajemen User</h3>
+          <div 
+            onClick={() => navigate("/admin/create-petugas")}
+            className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition"
+          >
+            <h3 className="text-lg font-semibold text-green-700">Buat Petugas</h3>
             <p className="text-gray-700 mt-1">
-              Lihat & kelola data pengguna.
+              Tambah akun petugas baru.
             </p>
           </div>
         </div>
