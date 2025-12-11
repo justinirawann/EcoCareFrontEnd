@@ -1,8 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import ProfileIncompleteModal from './components/ProfileIncompleteModal'
 
 function Dashboard() {
   const [user, setUser] = useState(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -18,21 +21,83 @@ function Dashboard() {
     window.location.href = "/login"
   }
 
+  const checkProfileComplete = (user) => {
+    if (!user) return false
+    const requiredFields = ['name', 'email', 'phone', 'address', 'image']
+    return requiredFields.every(field => user[field] && user[field].toString().trim() !== '')
+  }
+
+  const handleCreateReport = () => {
+    if (checkProfileComplete(user)) {
+      navigate('/dashboard/create-report')
+    } else {
+      setShowModal(true)
+    }
+  }
+
+  const handleCreateRecycling = () => {
+    if (checkProfileComplete(user)) {
+      navigate('/dashboard/create-recycling')
+    } else {
+      setShowModal(true)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-green-700">♻️ EcoCare</h1>
-            <p className="text-sm text-gray-600">Selamat datang, {user?.name}!</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-          >
-            Logout
-          </button>
+          
+          {user && (
+            <div className="relative">
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center space-x-3 hover:bg-gray-50 rounded-full p-2 transition-colors"
+              >
+                <img
+                  src={user?.image ? `http://127.0.0.1:8000/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=16a34a&color=fff&size=40`}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-green-300 shadow-sm"
+                />
+                <div className="text-left hidden md:block">
+                  <p className="font-semibold text-gray-800">{user.name}</p>
+                  <p className="text-xs text-gray-500">{user.email}</p>
+                </div>
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border">
+                  <Link
+                    to="/dashboard/edit-profile"
+                    className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 transition-colors"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Edit Profile
+                  </Link>
+                  <hr className="my-1" />
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-red-50 transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -44,12 +109,10 @@ function Dashboard() {
               <h2 className="text-3xl font-bold mb-2">Bersama Jaga Lingkungan! 🌍</h2>
               <p className="text-green-100">Laporkan sampah, pantau status, dan berkontribusi untuk lingkungan yang lebih bersih</p>
             </div>
-            <button
-              onClick={() => navigate("/dashboard/edit-profile")}
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-            >
-              👤 Edit Profile
-            </button>
+            <div className="text-right">
+              <p className="text-green-100 text-sm">Halo, {user?.name}! 👋</p>
+              <p className="text-green-200 text-xs">Mari jaga lingkungan bersama</p>
+            </div>
           </div>
         </div>
 
@@ -57,9 +120,9 @@ function Dashboard() {
         <div className="mb-8">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Fitur Utama</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link 
-              to="/dashboard/create-report" 
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
+            <div 
+              onClick={handleCreateReport}
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500 cursor-pointer"
             >
               <div className="flex items-start gap-4">
                 <div className="text-5xl">📍</div>
@@ -69,7 +132,7 @@ function Dashboard() {
                   <span className="inline-block mt-3 text-green-600 font-semibold text-sm">→ Buat Sekarang</span>
                 </div>
               </div>
-            </Link>
+            </div>
             
             <Link 
               to="/dashboard/my-reports" 
@@ -91,17 +154,25 @@ function Dashboard() {
         <div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">Fitur Lainnya</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer opacity-60">
+            <div 
+              onClick={handleCreateRecycling}
+              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
+            >
               <div className="text-3xl mb-3">♻️</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Daur Ulang</h4>
-              <p className="text-gray-500 text-sm">Segera hadir</p>
+              <h4 className="font-semibold text-gray-800 mb-1">Jual Sampah Daur Ulang</h4>
+              <p className="text-gray-600 text-sm">Jual sampah daur ulang Anda dengan harga terbaik</p>
+              <span className="inline-block mt-2 text-green-600 font-semibold text-sm">→ Mulai Jual</span>
             </div>
             
-            <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer opacity-60">
-              <div className="text-3xl mb-3">🚛</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Pengangkutan</h4>
-              <p className="text-gray-500 text-sm">Segera hadir</p>
-            </div>
+            <Link 
+              to="/dashboard/my-recycling"
+              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
+            >
+              <div className="text-3xl mb-3">📦</div>
+              <h4 className="font-semibold text-gray-800 mb-1">Pesanan Daur Ulang</h4>
+              <p className="text-gray-600 text-sm">Lihat status pesanan daur ulang Anda</p>
+              <span className="inline-block mt-2 text-blue-600 font-semibold text-sm">→ Lihat Pesanan</span>
+            </Link>
             
             <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer opacity-60">
               <div className="text-3xl mb-3">📚</div>
@@ -117,6 +188,11 @@ function Dashboard() {
           <p className="text-blue-800 text-sm">Pastikan foto yang Anda upload jelas dan deskripsi lengkap agar laporan dapat diproses dengan cepat!</p>
         </div>
       </div>
+      
+      <ProfileIncompleteModal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)} 
+      />
     </div>
   )
 }

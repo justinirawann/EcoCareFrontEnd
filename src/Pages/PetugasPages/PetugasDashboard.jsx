@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import PetugasProfileCheck from "../../middleware/PetugasProfileCheck"
 
 function PetugasDashboard() {
   const [user, setUser] = useState(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
@@ -17,46 +21,118 @@ function PetugasDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50 flex flex-col items-center py-20 px-4">
-      <div className="bg-white w-full max-w-3xl p-8 rounded-2xl shadow-xl border border-blue-100">
-        <h1 className="text-3xl font-bold text-blue-700 mb-2">
-          Petugas Dashboard
-        </h1>
-
-        <p className="text-gray-600 mb-6">
-          Halo, <span className="font-semibold">{user?.name}</span> 👷  
-          <br />
-          Ini adalah panel untuk petugas lapangan.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div className="p-6 border rounded-xl bg-blue-100">
-            <h3 className="text-lg font-semibold text-blue-700">
-              Daftar Tugas Hari Ini
-            </h3>
-            <p className="text-gray-700 mt-1">
-              Lihat tugas pengangkutan sampah yang sudah ditugaskan.
-            </p>
-          </div>
-
-          <div className="p-6 border rounded-xl bg-blue-100">
-            <h3 className="text-lg font-semibold text-blue-700">
-              Laporan Selesai
-            </h3>
-            <p className="text-gray-700 mt-1">
-              Konfirmasi laporan yang sudah kamu kerjakan.
-            </p>
+    <PetugasProfileCheck>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-blue-700">🚛 EcoCare Petugas</h1>
+            </div>
+            
+            {user && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center space-x-3 hover:bg-gray-50 rounded-full p-2 transition-colors"
+                >
+                  <img
+                    src={user?.image ? `http://127.0.0.1:8000/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=1d4ed8&color=fff&size=40`}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-300 shadow-sm"
+                  />
+                  <div className="text-left hidden md:block">
+                    <p className="font-semibold text-gray-800">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border">
+                    <Link
+                      to="/petugas/edit-profile"
+                      className="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Edit Profile
+                    </Link>
+                    <hr className="my-1" />
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-red-50 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="mt-10 bg-red-500 text-white py-2 px-6 rounded-xl hover:bg-red-600 transition"
-        >
-          Logout
-        </button>
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Hero Section */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-3xl font-bold mb-2">Dashboard Petugas 👷</h2>
+                <p className="text-blue-100">Kelola tugas pengangkutan sampah dan laporan dengan efisien</p>
+              </div>
+              <div className="text-right">
+                <p className="text-blue-100 text-sm">Halo, {user?.name}! 👋</p>
+                <p className="text-blue-200 text-xs">Petugas Lapangan EcoCare</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Features */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Tugas Utama</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500">
+                <div className="flex items-start gap-4">
+                  <div className="text-5xl">📋</div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">Daftar Tugas Hari Ini</h3>
+                    <p className="text-gray-600 text-sm">Lihat dan kelola tugas pengangkutan sampah yang sudah ditugaskan</p>
+                    <span className="inline-block mt-3 text-blue-600 font-semibold text-sm">→ Lihat Tugas</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Link 
+                to="/petugas/recycling-tasks"
+                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="text-5xl">♻️</div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">Tugas Daur Ulang</h3>
+                    <p className="text-gray-600 text-sm">Kelola penjemputan sampah daur ulang yang ditugaskan</p>
+                    <span className="inline-block mt-3 text-green-600 font-semibold text-sm">→ Lihat Tugas</span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* Info Box */}
+          <div className="mt-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+            <h4 className="font-bold text-blue-900 mb-2">💡 Info Petugas</h4>
+            <p className="text-blue-800 text-sm">Pastikan untuk selalu update status laporan setelah menyelesaikan tugas pengangkutan sampah!</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </PetugasProfileCheck>
   )
 }
 

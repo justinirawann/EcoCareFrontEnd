@@ -35,17 +35,37 @@ function AdminDashboard() {
             onClick={() => navigate("/admin/reports")}
             className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition"
           >
-            <h3 className="text-lg font-semibold text-green-700">Verifikasi Laporan</h3>
+            <h3 className="text-lg font-semibold text-green-700">📝 Verifikasi Laporan</h3>
             <p className="text-gray-700 mt-1">
               Kelola laporan sampah dari masyarakat.
             </p>
           </div>
 
           <div 
-            onClick={() => navigate("/admin/create-petugas")}
-            className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition"
+            onClick={() => navigate("/admin/recycling")}
+            className="p-6 border rounded-xl bg-blue-100 cursor-pointer hover:bg-blue-200 transition"
           >
-            <h3 className="text-lg font-semibold text-green-700">Buat Petugas</h3>
+            <h3 className="text-lg font-semibold text-blue-700">♻️ Kelola Daur Ulang</h3>
+            <p className="text-gray-700 mt-1">
+              Review pesanan daur ulang dan tentukan harga.
+            </p>
+          </div>
+
+          <div 
+            onClick={() => navigate("/admin/assign-petugas")}
+            className="p-6 border rounded-xl bg-purple-100 cursor-pointer hover:bg-purple-200 transition"
+          >
+            <h3 className="text-lg font-semibold text-purple-700">🚛 Tugaskan Petugas</h3>
+            <p className="text-gray-700 mt-1">
+              Assign petugas untuk penjemputan daur ulang.
+            </p>
+          </div>
+
+          <div 
+            onClick={() => navigate("/admin/create-petugas")}
+            className="p-6 border rounded-xl bg-orange-100 cursor-pointer hover:bg-orange-200 transition"
+          >
+            <h3 className="text-lg font-semibold text-orange-700">👷 Buat Petugas</h3>
             <p className="text-gray-700 mt-1">
               Tambah akun petugas baru.
             </p>

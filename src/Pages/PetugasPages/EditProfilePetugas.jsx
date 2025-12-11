@@ -8,40 +8,62 @@ function EditProfile() {
     phone: "",
     address: "",
     password: "",
+    confirmPassword: "",
     image: null
   })
   const [imagePreview, setImagePreview] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
-    try {
-      const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
-      console.log("Saved user:", savedUser)
-      if (savedUser) {
-        setFormData({
-          name: savedUser.name || "",
-          email: savedUser.email || "",
-          phone: savedUser.phone || "",
-          address: savedUser.address || "",
-          password: "",
-          image: null
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+      
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
-        if (savedUser.image) {
-          setImagePreview(`http://127.0.0.1:8000/storage/${savedUser.image}`)
-        } else {
-          setImagePreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(savedUser.name || 'User')}&background=16a34a&color=fff&size=200`)
+        
+        if (response.ok) {
+          const userData = await response.json()
+          console.log('User data from API:', userData)
+          setFormData({
+            name: userData.name || "",
+            email: userData.email || "",
+            phone: userData.phone || "",
+            address: userData.address || "",
+            password: "",
+            confirmPassword: "",
+            image: null
+          })
+          
+          if (userData.image) {
+            setImagePreview(`http://127.0.0.1:8000/storage/${userData.image}`)
+          } else {
+            setImagePreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'User')}&background=1d4ed8&color=fff&size=200`)
+          }
         }
+      } catch (error) {
+        console.error("Error fetching user data:", error)
       }
-    } catch (error) {
-      console.error("Error loading user data:", error)
     }
+    
+    fetchUserData()
   }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    
+    if (formData.password && formData.password !== formData.confirmPassword) {
+      alert("Password dan konfirmasi password tidak sama!")
+      return
+    }
 
+    setLoading(true)
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
 
     try {
@@ -73,12 +95,11 @@ function EditProfile() {
         return
       }
 
-      // Update user data di storage
       const storage = localStorage.getItem("token") ? localStorage : sessionStorage
       storage.setItem("user", JSON.stringify(data.user))
 
       alert("Profile berhasil diupdate!")
-      navigate("/dashboard")
+      navigate("/petugas/dashboard")
     } catch (error) {
       console.error(error)
       alert("Server error!")
@@ -103,7 +124,7 @@ function EditProfile() {
     <div className="min-h-screen bg-green-50 flex justify-center items-center p-6">
       <div className="bg-white w-full max-w-lg shadow-xl rounded-2xl p-8 border border-green-200">
         <h1 className="text-3xl font-extrabold text-green-700 text-center mb-6">
-          Edit Profile 👤
+          Edit Profile Petugas 👮‍♂️
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -129,7 +150,7 @@ function EditProfile() {
 
           {/* Nama */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
             <input
               type="text"
               placeholder="Nama lengkap"
@@ -142,7 +163,7 @@ function EditProfile() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
             <input
               type="email"
               placeholder="email@example.com"
@@ -155,39 +176,73 @@ function EditProfile() {
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon *</label>
             <input
               type="text"
               placeholder="08123456789"
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              required
             />
           </div>
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat *</label>
             <textarea
               placeholder="Alamat lengkap"
               className="w-full px-4 py-3 border rounded-xl min-h-[80px] focus:ring-2 focus:ring-green-500"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              required
             ></textarea>
           </div>
 
           {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-            <input
-              type="password"
-              placeholder="Kosongkan jika tidak ingin ubah password"
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <p className="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password</p>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Kosongkan jika tidak ingin ubah password"
+                className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500 pr-12"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
+
+          {/* Confirm Password */}
+          {formData.password && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password *</label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Konfirmasi password baru"
+                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500 pr-12"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showConfirmPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Submit */}
           <div className="flex gap-3">
@@ -200,13 +255,17 @@ function EditProfile() {
             </button>
             <button
               type="button"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/petugas/dashboard")}
               className="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-lg hover:bg-gray-600"
             >
               Batal
             </button>
           </div>
         </form>
+
+        <p className="text-xs text-gray-500 mt-4 text-center">
+          * Field wajib diisi untuk melengkapi profile petugas
+        </p>
       </div>
     </div>
   )
