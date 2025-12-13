@@ -92,9 +92,9 @@ export default function UserManagement() {
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => navigate('/admin/dashboard')}
                 className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
@@ -102,15 +102,16 @@ export default function UserManagement() {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Kembali
+                <span className="hidden sm:inline">Kembali</span>
               </button>
-              <h1 className="text-3xl font-bold text-gray-800">👥 User Management</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">👥 User Management</h1>
             </div>
             <button
               onClick={() => setShowForm(true)}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
             >
-              + Tambah User
+              <span className="sm:hidden">+ Tambah</span>
+              <span className="hidden sm:inline">+ Tambah User</span>
             </button>
           </div>
         </div>
@@ -138,30 +139,80 @@ export default function UserManagement() {
                 <p className="text-gray-500 text-lg">Belum ada user.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-4 p-4">
+                {users.map((user) => (
+                  <div key={user.id} className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-gray-900">{user.name}</h3>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                      </div>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        user.roles?.[0]?.slug === 'admin' ? 'bg-red-100 text-red-800' :
+                        user.roles?.[0]?.slug === 'petugas' ? 'bg-blue-100 text-blue-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {user.roles?.[0]?.name || 'User'}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <p>📞 {user.phone}</p>
+                      <p>📍 {user.address}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleResetPassword(user.id)}
+                        className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded text-sm"
+                      >
+                        Reset
+                      </button>
+                      {user.email !== 'admin@ecocare.com' && (
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="flex-1 bg-red-500 text-white px-3 py-2 rounded text-sm"
+                        >
+                          Hapus
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Desktop Table View */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {users.map((user) => (
                       <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
+                        <td className="px-3 lg:px-6 py-4">
                           <div>
                             <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.address}</div>
+                            <div className="text-sm text-gray-500 lg:hidden">{user.phone}</div>
+                            <div className="text-sm text-gray-500 truncate max-w-32">{user.address}</div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {user.email}
+                        <td className="px-3 lg:px-6 py-4 text-sm text-gray-900">
+                          <div className="truncate max-w-32 lg:max-w-none">{user.email}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             user.roles?.[0]?.slug === 'admin' ? 'bg-red-100 text-red-800' :
                             user.roles?.[0]?.slug === 'petugas' ? 'bg-blue-100 text-blue-800' :
@@ -170,36 +221,39 @@ export default function UserManagement() {
                             {user.roles?.[0]?.name || 'User'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {user.phone}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                          <button
-                            onClick={() => handleEdit(user)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleResetPassword(user.id)}
-                            className="text-yellow-600 hover:text-yellow-900"
-                          >
-                            Reset PW
-                          </button>
-                          {user.email !== 'admin@ecocare.com' && (
+                        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex flex-col lg:flex-row lg:space-x-2 space-y-1 lg:space-y-0">
                             <button
-                              onClick={() => handleDelete(user.id)}
-                              className="text-red-600 hover:text-red-900"
+                              onClick={() => handleEdit(user)}
+                              className="text-blue-600 hover:text-blue-900 text-xs lg:text-sm"
                             >
-                              Hapus
+                              Edit
                             </button>
-                          )}
+                            <button
+                              onClick={() => handleResetPassword(user.id)}
+                              className="text-yellow-600 hover:text-yellow-900 text-xs lg:text-sm"
+                            >
+                              Reset
+                            </button>
+                            {user.email !== 'admin@ecocare.com' && (
+                              <button
+                                onClick={() => handleDelete(user.id)}
+                                className="text-red-600 hover:text-red-900 text-xs lg:text-sm"
+                              >
+                                Hapus
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
         )}
@@ -277,8 +331,8 @@ function UserForm({ user, onClose, onSubmit }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="p-6">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
             {user ? 'Edit User' : 'Tambah User'}
           </h2>

@@ -78,6 +78,32 @@ function ManageReports() {
     }
   }
 
+  const handleRevision = async (id, notes) => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+    try {
+      const body = { status: "pending", admin_notes: notes }
+      
+      const response = await fetch(`http://127.0.0.1:8000/api/admin/reports/${id}/verify`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+      const data = await response.json()
+      if (data.status) {
+        alert("Catatan revisi berhasil dikirim!")
+        setShowModal(false)
+        setAdminNotes("")
+        fetchReports()
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Gagal mengirim revisi")
+    }
+  }
+
   const handleAssignPetugas = async () => {
     if (!selectedPetugas) {
       alert("Pilih petugas terlebih dahulu")
@@ -138,9 +164,9 @@ function ManageReports() {
 
   return (
     <>
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-2 sm:gap-4 mb-6">
           <button
             onClick={() => navigate('/admin/dashboard')}
             className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
@@ -148,96 +174,178 @@ function ManageReports() {
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Kembali
+            <span className="hidden sm:inline">Kembali</span>
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">Kelola Laporan</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Kelola Laporan</h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Judul</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lokasi</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pelapor</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Petugas</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Biaya</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {reports.map((report) => (
-                <tr key={report.id}>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{report.title}</div>
-                    <div className="text-sm text-gray-500">{report.description}</div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{report.location}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{report.user?.name}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(report.status)}`}>
-                      {report.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {report.assigned_petugas ? report.assigned_petugas.name : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {report.fee_amount ? `Rp ${Number(report.fee_amount).toLocaleString()}` : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-sm space-x-2">
-                    {report.status === "pending" && (
-                      <>
-                        <button
-                          onClick={() => handleVerify(report.id, "verified")}
-                          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                        >
-                          Verifikasi
-                        </button>
-                        <button
-                          onClick={() => openNotesModal(report)}
-                          className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                        >
-                          Revisi
-                        </button>
-                        <button
-                          onClick={() => handleVerify(report.id, "rejected")}
-                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                        >
-                          Tolak
-                        </button>
-                      </>
-                    )}
-                    {report.status === "verified" && (
-                      <button
-                        onClick={() => openAssignModal(report)}
-                        className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600"
-                      >
-                        Assign Petugas
-                      </button>
-                    )}
-                    {report.photo && (
-                      <button
-                        onClick={() => openPhotoModal(`http://127.0.0.1:8000/storage/${report.photo}`, report.title)}
-                        className="text-blue-500 hover:text-blue-700 font-medium"
-                      >
-                        📷 Lihat Foto
-                      </button>
-                    )}
-                  </td>
+        {/* Mobile Card View */}
+        <div className="block lg:hidden space-y-4">
+          {reports.map((report) => (
+            <div key={report.id} className="bg-white rounded-lg shadow p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900">{report.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1">{report.description}</p>
+                </div>
+                <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(report.status)} ml-2`}>
+                  {report.status}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-gray-500">📍 Lokasi:</span>
+                  <p className="font-medium">{report.location}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">👤 Pelapor:</span>
+                  <p className="font-medium">{report.user?.name}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">👷 Petugas:</span>
+                  <p className="font-medium">{report.assigned_petugas ? report.assigned_petugas.name : '-'}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">💰 Biaya:</span>
+                  <p className="font-medium">{report.fee_amount ? `Rp ${Number(report.fee_amount).toLocaleString()}` : '-'}</p>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {report.status === "pending" && (
+                  <>
+                    <button
+                      onClick={() => handleVerify(report.id, "verified")}
+                      className="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600"
+                    >
+                      Verifikasi
+                    </button>
+                    <button
+                      onClick={() => openNotesModal(report)}
+                      className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded text-sm hover:bg-yellow-600"
+                    >
+                      Revisi
+                    </button>
+                    <button
+                      onClick={() => handleVerify(report.id, "rejected")}
+                      className="flex-1 bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600"
+                    >
+                      Tolak
+                    </button>
+                  </>
+                )}
+                {report.status === "verified" && (
+                  <button
+                    onClick={() => openAssignModal(report)}
+                    className="flex-1 bg-purple-500 text-white px-3 py-2 rounded text-sm hover:bg-purple-600"
+                  >
+                    Assign Petugas
+                  </button>
+                )}
+                {report.photo && (
+                  <button
+                    onClick={() => openPhotoModal(`http://127.0.0.1:8000/storage/${report.photo}`, report.title)}
+                    className="flex-1 bg-gray-500 text-white px-3 py-2 rounded text-sm hover:bg-gray-600"
+                  >
+                    📷 Foto
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Desktop Table View */}
+        <div className="hidden lg:block bg-white rounded-lg shadow overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Judul</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lokasi</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pelapor</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Petugas</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Biaya</th>
+                  <th className="px-3 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {reports.map((report) => (
+                  <tr key={report.id}>
+                    <td className="px-3 xl:px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900 line-clamp-2">{report.title}</div>
+                      <div className="text-sm text-gray-500 line-clamp-1">{report.description}</div>
+                    </td>
+                    <td className="px-3 xl:px-6 py-4 text-sm text-gray-500">{report.location}</td>
+                    <td className="px-3 xl:px-6 py-4 text-sm text-gray-500">{report.user?.name}</td>
+                    <td className="px-3 xl:px-6 py-4">
+                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(report.status)}`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-3 xl:px-6 py-4 text-sm text-gray-500">
+                      {report.assigned_petugas ? report.assigned_petugas.name : '-'}
+                    </td>
+                    <td className="px-3 xl:px-6 py-4 text-sm text-gray-500">
+                      {report.fee_amount ? `Rp ${Number(report.fee_amount).toLocaleString()}` : '-'}
+                    </td>
+                    <td className="px-3 xl:px-6 py-4 text-sm">
+                      <div className="flex flex-col space-y-1">
+                        {report.status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => handleVerify(report.id, "verified")}
+                              className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
+                            >
+                              Verifikasi
+                            </button>
+                            <button
+                              onClick={() => openNotesModal(report)}
+                              className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600"
+                            >
+                              Revisi
+                            </button>
+                            <button
+                              onClick={() => handleVerify(report.id, "rejected")}
+                              className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+                            >
+                              Tolak
+                            </button>
+                          </>
+                        )}
+                        {report.status === "verified" && (
+                          <button
+                            onClick={() => openAssignModal(report)}
+                            className="bg-purple-500 text-white px-2 py-1 rounded text-xs hover:bg-purple-600"
+                          >
+                            Assign
+                          </button>
+                        )}
+                        {report.photo && (
+                          <button
+                            onClick={() => openPhotoModal(`http://127.0.0.1:8000/storage/${report.photo}`, report.title)}
+                            className="text-blue-500 hover:text-blue-700 text-xs font-medium"
+                          >
+                            📷 Foto
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
 
     {/* Modal untuk catatan revisi */}
     {showModal && (
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full mx-4 border-2 border-gray-200">
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-2xl p-4 sm:p-6 max-w-md w-full border-2 border-gray-200">
           <h2 className="text-xl font-bold mb-4">Verifikasi Laporan</h2>
           <textarea
             value={adminNotes}
@@ -258,6 +366,12 @@ function ManageReports() {
               Verifikasi
             </button>
             <button
+              onClick={() => handleRevision(selectedReport.id, adminNotes)}
+              className="flex-1 bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600"
+            >
+              Kirim Revisi
+            </button>
+            <button
               onClick={() => {
                 setShowModal(false)
                 setAdminNotes("")
@@ -273,8 +387,8 @@ function ManageReports() {
 
     {/* Modal untuk assign petugas */}
     {showAssignModal && (
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full mx-4 border-2 border-gray-200">
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-2xl p-4 sm:p-6 max-w-md w-full border-2 border-gray-200">
           <h2 className="text-xl font-bold mb-4">Assign Petugas</h2>
           <select
             value={selectedPetugas}
