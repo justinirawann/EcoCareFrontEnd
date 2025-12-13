@@ -16,7 +16,7 @@ function AdminDashboard() {
     localStorage.removeItem("user")
     sessionStorage.removeItem("token")
     sessionStorage.removeItem("user")
-    window.location.href = "/login"
+    window.location.href = "/"
   }
 
   return (
@@ -68,6 +68,16 @@ function AdminDashboard() {
             <h3 className="text-lg font-semibold text-orange-700">👷 Buat Petugas</h3>
             <p className="text-gray-700 mt-1">
               Tambah akun petugas baru.
+            </p>
+          </div>
+
+          <div 
+            onClick={() => navigate("/admin/articles")}
+            className="p-6 border rounded-xl bg-red-100 cursor-pointer hover:bg-red-200 transition"
+          >
+            <h3 className="text-lg font-semibold text-red-700">📰 Kelola Artikel</h3>
+            <p className="text-gray-700 mt-1">
+              Buat, edit, dan hapus artikel edukasi.
             </p>
           </div>
         </div>

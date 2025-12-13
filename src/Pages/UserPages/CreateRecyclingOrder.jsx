@@ -20,7 +20,28 @@ function CreateRecyclingOrder() {
     setLoading(true)
 
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+    
+    // Debug: Cek user role terlebih dahulu
+    try {
+      const userResponse = await fetch("http://127.0.0.1:8000/api/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const userData = await userResponse.json()
+      console.log('User roles:', userData.roles)
+      
+      if (!userData.roles || !userData.roles.includes('user')) {
+        alert('Anda tidak memiliki akses untuk fitur ini. Role yang diperlukan: user')
+        setLoading(false)
+        return
+      }
+    } catch (error) {
+      console.error('Error checking user role:', error)
+      alert('Gagal memverifikasi akses user')
+      setLoading(false)
+      return
+    }
 
+    // Lanjutkan dengan submit form
     try {
       const formDataToSend = new FormData()
       formDataToSend.append('category', formData.category)
@@ -40,6 +61,8 @@ function CreateRecyclingOrder() {
       })
 
       const data = await response.json()
+      console.log('Response status:', response.status)
+      console.log('Response data:', data)
 
       if (!response.ok) {
         alert(data.message || "Gagal membuat pesanan")

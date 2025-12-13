@@ -9,8 +9,26 @@ function Dashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
-    setUser(savedUser)
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+      
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error)
+      }
+    }
+    
+    fetchUserData()
   }, [])
 
   const handleLogout = () => {
@@ -18,7 +36,7 @@ function Dashboard() {
     localStorage.removeItem("user")
     sessionStorage.removeItem("token")
     sessionStorage.removeItem("user")
-    window.location.href = "/login"
+    window.location.href = "/"
   }
 
   const checkProfileComplete = (user) => {

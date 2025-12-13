@@ -8,6 +8,7 @@ import ManageReports from "./Pages/AdminPages/ManageReports"
 import CreatePetugas from "./Pages/AdminPages/CreatePetugas"
 import ManageRecycling from "./Pages/AdminPages/ManageRecycling"
 import AssignPetugas from "./Pages/AdminPages/AssignPetugas"
+import ManageArticles from "./Pages/AdminPages/ManageArticles"
 import PetugasDashboard from "./Pages/PetugasPages/PetugasDashboard"
 import CreateReports from "./Pages/UserPages/CreateReports"
 import MyReports from "./Pages/UserPages/MyReports"
@@ -166,6 +167,17 @@ function AppRoutes() {
             <ProtectedRoute>
               <RoleRoute allowedRoles={["admin"]}>
                 <AssignPetugas />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/articles"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["admin"]}>
+                <ManageArticles />
               </RoleRoute>
             </ProtectedRoute>
           }
