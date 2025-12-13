@@ -222,13 +222,26 @@ export default function ManageArticles() {
 //           ARTICLE FORM
 // ===================================
 function ArticleForm({ article, onClose, onSubmit }) {
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toISOString().slice(0, 16);
+  };
+
   const [formData, setFormData] = useState(
-    article || {
+    article ? {
+      title: article.title || '',
+      description: article.description || '',
+      content: article.content || '',
+      featured_image: article.featured_image || '',
+      published_at: article.published_at || '',
+      created_at: article.created_at || '',
+    } : {
       title: '',
       description: '',
       content: '',
       featured_image: '',
       published_at: '',
+      created_at: getCurrentDateTime(),
     }
   );
   const [imageFile, setImageFile] = useState(null);
@@ -386,6 +399,18 @@ function ArticleForm({ article, onClose, onSubmit }) {
                 className="hidden"
               />
             </label>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">Tanggal Dibuat</label>
+            <input
+              type="datetime-local"
+              value={formData.created_at}
+              className="w-full border px-3 py-2 rounded bg-gray-100 text-gray-600"
+              disabled
+              readOnly
+            />
+            <p className="text-xs text-gray-500 mt-1">Tanggal pembuatan artikel (otomatis)</p>
           </div>
 
           <div>

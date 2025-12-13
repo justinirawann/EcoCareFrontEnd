@@ -218,7 +218,13 @@ export default function UserManagement() {
 
 function UserForm({ user, onClose, onSubmit }) {
   const [formData, setFormData] = useState(
-    user || {
+    user ? {
+      name: user.name || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      address: user.address || '',
+      role: user.roles?.[0]?.slug || 'user',
+    } : {
       name: '',
       email: '',
       phone: '',
@@ -334,17 +340,27 @@ function UserForm({ user, onClose, onSubmit }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              >
-                <option value="user">User</option>
-                <option value="petugas">Petugas</option>
-                <option value="admin">Admin</option>
-              </select>
+              {user ? (
+                <input
+                  type="text"
+                  value={formData.role === 'admin' ? 'Admin' : formData.role === 'petugas' ? 'Petugas' : 'User'}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600"
+                  disabled
+                  readOnly
+                />
+              ) : (
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  required
+                >
+                  <option value="user">User</option>
+                  <option value="petugas">Petugas</option>
+                  <option value="admin">Admin</option>
+                </select>
+              )}
             </div>
 
             {!user && (
