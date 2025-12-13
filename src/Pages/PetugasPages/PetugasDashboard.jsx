@@ -98,16 +98,19 @@ function PetugasDashboard() {
           <div className="mb-8">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Tugas Utama</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500">
+              <Link 
+                to="/petugas/report-tasks"
+                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
+              >
                 <div className="flex items-start gap-4">
                   <div className="text-5xl">📋</div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">Daftar Tugas Hari Ini</h3>
-                    <p className="text-gray-600 text-sm">Lihat dan kelola tugas pengangkutan sampah yang sudah ditugaskan</p>
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">Tugas Laporan</h3>
+                    <p className="text-gray-600 text-sm">Kelola laporan sampah yang ditugaskan dan status pembayaran</p>
                     <span className="inline-block mt-3 text-blue-600 font-semibold text-sm">→ Lihat Tugas</span>
                   </div>
                 </div>
-              </div>
+              </Link>
               
               <Link 
                 to="/petugas/recycling-tasks"

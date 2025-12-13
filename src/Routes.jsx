@@ -5,18 +5,23 @@ import Register from "./Pages/Register"
 import Dashboard from "./Pages/UserPages/Dashboard"
 import AdminDashboard from "./Pages/AdminPages/AdminDashboard"
 import ManageReports from "./Pages/AdminPages/ManageReports"
-import CreatePetugas from "./Pages/AdminPages/CreatePetugas"
+
 import ManageRecycling from "./Pages/AdminPages/ManageRecycling"
-import AssignPetugas from "./Pages/AdminPages/AssignPetugas"
+
 import ManageArticles from "./Pages/AdminPages/ManageArticles"
+import UserManagement from "./Pages/AdminPages/UserManagement"
+import EditProfileAdmin from "./Pages/AdminPages/EditProfileAdmin"
 import PetugasDashboard from "./Pages/PetugasPages/PetugasDashboard"
 import CreateReports from "./Pages/UserPages/CreateReports"
 import MyReports from "./Pages/UserPages/MyReports"
 import EditReport from "./Pages/UserPages/EditReport"
 import EditProfile from "./Pages/UserPages/EditProfile"
+import Articles from "./Pages/UserPages/Articles"
+import ArticleDetail from "./Pages/UserPages/ArticleDetail"
 import CreateRecyclingOrder from "./Pages/UserPages/CreateRecyclingOrder"
 import MyRecyclingOrders from "./Pages/UserPages/MyRecyclingOrders"
 import MyRecyclingTasks from "./Pages/PetugasPages/MyRecyclingTasks"
+import MyReportTasks from "./Pages/PetugasPages/MyReportTasks"
 import EditProfilePetugas from "./Pages/PetugasPages/EditProfilePetugas"
 
 
@@ -34,6 +39,8 @@ function AppRoutes() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
         <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+        <Route path="/articles" element={<Articles />} />
+        <Route path="/articles/:id" element={<ArticleDetail />} />
 
         {/* USER */}
         <Route
@@ -139,16 +146,7 @@ function AppRoutes() {
           }
         />
 
-        <Route
-          path="/admin/create-petugas"
-          element={
-            <ProtectedRoute>
-              <RoleRoute allowedRoles={["admin"]}>
-                <CreatePetugas />
-              </RoleRoute>
-            </ProtectedRoute>
-          }
-        />
+
 
         <Route
           path="/admin/recycling"
@@ -161,16 +159,7 @@ function AppRoutes() {
           }
         />
 
-        <Route
-          path="/admin/assign-petugas"
-          element={
-            <ProtectedRoute>
-              <RoleRoute allowedRoles={["admin"]}>
-                <AssignPetugas />
-              </RoleRoute>
-            </ProtectedRoute>
-          }
-        />
+
 
         <Route
           path="/admin/articles"
@@ -178,6 +167,28 @@ function AppRoutes() {
             <ProtectedRoute>
               <RoleRoute allowedRoles={["admin"]}>
                 <ManageArticles />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["admin"]}>
+                <UserManagement />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/edit-profile"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["admin"]}>
+                <EditProfileAdmin />
               </RoleRoute>
             </ProtectedRoute>
           }
@@ -212,6 +223,17 @@ function AppRoutes() {
             <ProtectedRoute>
               <RoleRoute allowedRoles={["petugas"]}>
                 <MyRecyclingTasks />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/petugas/report-tasks"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["petugas"]}>
+                <MyReportTasks />
               </RoleRoute>
             </ProtectedRoute>
           }

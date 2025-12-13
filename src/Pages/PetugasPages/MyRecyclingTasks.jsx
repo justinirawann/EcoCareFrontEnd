@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function MyRecyclingTasks() {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchTasks()
@@ -27,6 +31,28 @@ function MyRecyclingTasks() {
     }
   }
 
+  const updatePaymentStatus = async (taskId, status) => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      const response = await fetch(`http://127.0.0.1:8000/api/petugas/recycling/${taskId}/payment`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ payment_status: status }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update payment')
+
+      setSuccess(`Status pembayaran berhasil diubah ke ${status === 'paid' ? 'Lunas' : 'Belum Bayar'}`)
+      fetchTasks()
+    } catch (err) {
+      setError('Gagal update status pembayaran')
+      console.error(err)
+    }
+  }
+
   const handleComplete = async (taskId) => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
@@ -40,11 +66,12 @@ function MyRecyclingTasks() {
       })
 
       if (response.ok) {
-        alert("Pesanan berhasil diselesaikan!")
+        setSuccess("Pesanan berhasil diselesaikan!")
         fetchTasks()
       }
     } catch (error) {
-      console.error("Error completing task:", error)
+      setError("Gagal menyelesaikan pesanan")
+      console.error(error)
     }
   }
 
@@ -70,7 +97,29 @@ function MyRecyclingTasks() {
   return (
     <div className="min-h-screen bg-blue-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-blue-700 mb-8">Tugas Penjemputan Daur Ulang</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={() => navigate('/petugas/dashboard')}
+            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Kembali
+          </button>
+          <h1 className="text-3xl font-bold text-blue-700">Tugas Penjemputan Daur Ulang</h1>
+        </div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+            {success}
+          </div>
+        )}
 
         {tasks.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-12 text-center">
@@ -117,7 +166,7 @@ function MyRecyclingTasks() {
                 </div>
 
                 <div className="bg-green-50 p-4 rounded-lg mb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
                     <div>
                       <p className="text-sm text-gray-500">Harga per kg</p>
                       <p className="font-semibold text-green-600">
@@ -134,6 +183,14 @@ function MyRecyclingTasks() {
                         Rp {Number(task.total_price).toLocaleString()}
                       </p>
                     </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Status Pembayaran</p>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        task.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {task.payment_status === 'paid' ? 'Lunas' : 'Belum Bayar'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -145,13 +202,41 @@ function MyRecyclingTasks() {
                 )}
 
                 {task.status === 'Berjalan' && (
-                  <div className="border-t pt-4">
-                    <button
-                      onClick={() => handleComplete(task.id)}
-                      className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
-                    >
-                      ✅ Selesaikan Penjemputan
-                    </button>
+                  <div className="border-t pt-4 space-y-3">
+                    <div className="flex flex-wrap gap-3">
+                      {task.payment_status === 'unpaid' ? (
+                        <button
+                          onClick={() => updatePaymentStatus(task.id, 'paid')}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
+                        >
+                          💰 Tandai Lunas
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updatePaymentStatus(task.id, 'unpaid')}
+                          className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 font-medium"
+                        >
+                          ❌ Tandai Belum Bayar
+                        </button>
+                      )}
+                      
+                      {task.payment_status === 'paid' && (
+                        <button
+                          onClick={() => handleComplete(task.id)}
+                          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
+                        >
+                          ✅ Selesaikan Penjemputan
+                        </button>
+                      )}
+                    </div>
+                    
+                    {task.payment_status === 'unpaid' && (
+                      <div className="bg-yellow-50 p-3 rounded-lg">
+                        <p className="text-sm text-yellow-700">
+                          ⚠️ Pastikan user sudah membayar sebelum menyelesaikan penjemputan
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -192,11 +192,15 @@ function Dashboard() {
               <span className="inline-block mt-2 text-blue-600 font-semibold text-sm">→ Lihat Pesanan</span>
             </Link>
             
-            <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer opacity-60">
+            <Link 
+              to="/articles"
+              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-purple-500"
+            >
               <div className="text-3xl mb-3">📚</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Edukasi</h4>
-              <p className="text-gray-500 text-sm">Segera hadir</p>
-            </div>
+              <h4 className="font-semibold text-gray-800 mb-1">Artikel Edukasi</h4>
+              <p className="text-gray-600 text-sm">Tips & panduan menjaga lingkungan</p>
+              <span className="inline-block mt-2 text-purple-600 font-semibold text-sm">→ Baca Artikel</span>
+            </Link>
           </div>
         </div>
 

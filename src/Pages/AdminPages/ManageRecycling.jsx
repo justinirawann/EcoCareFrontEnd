@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function ManageRecycling() {
   const [orders, setOrders] = useState([])
   const [petugas, setPetugas] = useState([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [selectedAssign, setSelectedAssign] = useState(null)
   const [selectedPetugas, setSelectedPetugas] = useState('')
@@ -17,20 +19,21 @@ function ManageRecycling() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const [ordersResponse, petugasResponse] = await Promise.all([
+      const [ordersResponse, usersResponse] = await Promise.all([
         fetch("http://127.0.0.1:8000/api/admin/recycling", {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://127.0.0.1:8000/api/admin/petugas", {
+        fetch("http://127.0.0.1:8000/api/admin/users", {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
       
-      if (ordersResponse.ok && petugasResponse.ok) {
+      if (ordersResponse.ok && usersResponse.ok) {
         const ordersData = await ordersResponse.json()
-        const petugasData = await petugasResponse.json()
+        const usersData = await usersResponse.json()
         setOrders(ordersData.orders)
-        setPetugas(petugasData.petugas || [])
+        const petugasOnly = usersData.filter(user => user.roles?.[0]?.slug === 'petugas')
+        setPetugas(petugasOnly)
       }
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -136,7 +139,18 @@ function ManageRecycling() {
   return (
     <div className="min-h-screen bg-blue-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-blue-700 mb-8">Kelola Pesanan Daur Ulang</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Kembali
+          </button>
+          <h1 className="text-3xl font-bold text-blue-700">Kelola Pesanan Daur Ulang</h1>
+        </div>
 
         <div className="grid gap-6">
           {orders.map((order) => (

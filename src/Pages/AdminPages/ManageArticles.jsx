@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ManageArticles() {
   const [articles, setArticles] = useState([]);
@@ -7,6 +8,7 @@ export default function ManageArticles() {
   const [editingArticle, setEditingArticle] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchArticles();
@@ -16,9 +18,9 @@ export default function ManageArticles() {
   const fetchArticles = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-      const response = await fetch('/api/articles', {
+      const response = await fetch('http://127.0.0.1:8000/api/articles', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,7 +28,14 @@ export default function ManageArticles() {
 
       const data = await response.json();
 
-      setArticles(data.data || []);
+      // Handle pagination response
+      if (data.data && Array.isArray(data.data)) {
+        setArticles(data.data);
+      } else if (Array.isArray(data)) {
+        setArticles(data);
+      } else {
+        setArticles([]);
+      }
       setError('');
     } catch (err) {
       setError('Gagal memuat artikel');
@@ -41,9 +50,9 @@ export default function ManageArticles() {
     if (!window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) return;
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-      const response = await fetch(`/api/articles/${articleId}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/articles/${articleId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,14 +89,27 @@ export default function ManageArticles() {
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-3xl font-bold text-gray-800">📰 Kelola Artikel</h1>
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            + Tambah Artikel
-          </button>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/admin/dashboard')}
+                className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Kembali
+              </button>
+              <h1 className="text-3xl font-bold text-gray-800">📰 Kelola Artikel</h1>
+            </div>
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              + Tambah Artikel
+            </button>
+          </div>
         </div>
 
         {/* Alerts */}
@@ -117,49 +139,68 @@ export default function ManageArticles() {
                 <p className="text-gray-500 text-lg">Belum ada artikel. Mulai dengan membuat artikel baru!</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                {articles.map((article) => (
-                  <div key={article.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex flex-col">
-
-                    {article.featured_image && (
-                      <img
-                        src={article.featured_image}
-                        alt={article.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    )}
-
-                    <div className="p-4 flex flex-col flex-grow">
-                      <h3 className="font-bold text-gray-800 mb-2 line-clamp-2">{article.title}</h3>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-3">{article.description}</p>
-
-                      <div className="mt-auto">
-                        <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
-                          <span>Oleh: {article.user?.name}</span>
-                          <span>{new Date(article.created_at).toLocaleDateString('id-ID')}</span>
-                        </div>
-
-                        <div className="flex gap-2">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artikel</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {articles.map((article) => (
+                      <tr key={article.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">
+                          <div className="flex items-start space-x-4">
+                            {article.featured_image && (
+                              <img
+                                src={`http://127.0.0.1:8000/storage/${article.featured_image}`}
+                                alt={article.title}
+                                className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-medium text-gray-900 truncate">{article.title}</h3>
+                              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{article.description || 'Tidak ada deskripsi'}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{article.user?.name || 'Unknown'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            article.published_at 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {article.published_at ? 'Published' : 'Draft'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(article.created_at).toLocaleDateString('id-ID')}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                           <button
                             onClick={() => handleEdit(article)}
-                            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded"
+                            className="text-blue-600 hover:text-blue-900"
                           >
-                            ✏️ Edit
+                            Edit
                           </button>
-
                           <button
                             onClick={() => handleDelete(article.id)}
-                            className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded"
+                            className="text-red-600 hover:text-red-900"
                           >
-                            🗑️ Hapus
+                            Hapus
                           </button>
-                        </div>
-
-                      </div>
-                    </div>
-
-                  </div>
-                ))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
@@ -190,6 +231,10 @@ function ArticleForm({ article, onClose, onSubmit }) {
       published_at: '',
     }
   );
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(
+    article?.featured_image ? `http://127.0.0.1:8000/storage/${article.featured_image}` : null
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -206,21 +251,35 @@ function ArticleForm({ article, onClose, onSubmit }) {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
       const url = article
-        ? `/api/articles/${article.id}`
-        : `/api/articles`;
+        ? `http://127.0.0.1:8000/api/articles/${article.id}`
+        : `http://127.0.0.1:8000/api/articles`;
 
       const method = article ? 'PUT' : 'POST';
 
+      // Use FormData for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('content', formData.content);
+      if (formData.published_at) {
+        formDataToSend.append('published_at', formData.published_at);
+      }
+      if (imageFile) {
+        formDataToSend.append('featured_image', imageFile);
+      }
+      if (article && method === 'PUT') {
+        formDataToSend.append('_method', 'PUT');
+      }
+
       const response = await fetch(url, {
-        method,
+        method: article ? 'POST' : 'POST', // Always POST for FormData with _method
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -239,14 +298,8 @@ function ArticleForm({ article, onClose, onSubmit }) {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -303,13 +356,36 @@ function ArticleForm({ article, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">URL Gambar</label>
-            <input
-              name="featured_image"
-              value={formData.featured_image}
-              onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-            />
+            <label className="block text-sm font-semibold mb-2">Gambar Artikel</label>
+            {imagePreview && (
+              <div className="mb-3">
+                <img 
+                  src={imagePreview} 
+                  alt="Preview" 
+                  className="w-full max-w-sm rounded-lg border-2 border-gray-200"
+                />
+                <p className="text-xs text-gray-500 mt-1">Gambar saat ini</p>
+              </div>
+            )}
+            <label className="cursor-pointer">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition">
+                <div className="text-4xl mb-2">📷</div>
+                <p className="text-sm text-gray-600 font-medium">Klik untuk pilih gambar</p>
+                <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Max 2MB)</p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  setImageFile(file)
+                  if (file) {
+                    setImagePreview(URL.createObjectURL(file))
+                  }
+                }}
+                className="hidden"
+              />
+            </label>
           </div>
 
           <div>
@@ -317,10 +393,11 @@ function ArticleForm({ article, onClose, onSubmit }) {
             <input
               type="datetime-local"
               name="published_at"
-              value={formData.published_at}
-              onChange={handleChange}
+              value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, published_at: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
               className="w-full border px-3 py-2 rounded"
             />
+            <p className="text-xs text-gray-500 mt-1">Kosongkan untuk menyimpan sebagai draft</p>
           </div>
 
           <div className="flex gap-3 pt-4 border-t border-gray-200">
