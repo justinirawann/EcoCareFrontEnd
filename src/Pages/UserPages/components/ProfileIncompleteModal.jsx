@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../../../contexts/LanguageContext'
 
 function ProfileIncompleteModal({ isOpen, onClose }) {
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   if (!isOpen) return null
 
@@ -16,11 +18,10 @@ function ProfileIncompleteModal({ isOpen, onClose }) {
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Profil Belum Lengkap
+            {t('profile_incomplete_title')}
           </h2>
           <p className="text-gray-600 mb-6">
-            Untuk membuat laporan, Anda harus melengkapi profil terlebih dahulu. 
-            Pastikan data <strong>nama, email, nomor telepon, alamat, dan foto profil</strong> sudah terisi semua.
+            {t('profile_incomplete_message')}
           </p>
           
           <div className="flex gap-3">
@@ -28,13 +29,13 @@ function ProfileIncompleteModal({ isOpen, onClose }) {
               onClick={handleEditProfile}
               className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors"
             >
-              Lengkapi Profil
+              {t('complete_profile_button')}
             </button>
             <button
               onClick={onClose}
               className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-colors"
             >
-              Nanti Saja
+              {t('later_button')}
             </button>
           </div>
         </div>

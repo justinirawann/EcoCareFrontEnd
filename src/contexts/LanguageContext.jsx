@@ -131,7 +131,11 @@ function LanguageProvider({ children }) {
         reject_report_confirm: 'Tolak Laporan?',
         reject_warning: 'Laporan akan ditolak dan user akan mendapat notifikasi',
         reject_order_confirm: 'Tolak Pesanan?',
-        reject_order_warning: 'Pesanan akan ditolak dan user akan mendapat notifikasi'
+        reject_order_warning: 'Pesanan akan ditolak dan user akan mendapat notifikasi',
+        profile_incomplete_title: 'Profil Belum Lengkap',
+        profile_incomplete_message: 'Untuk membuat laporan, Anda harus melengkapi profil terlebih dahulu. Pastikan data nama, email, nomor telepon, alamat, dan foto profil sudah terisi semua.',
+        complete_profile_button: 'Lengkapi Profil',
+        later_button: 'Nanti Saja'
       } : {
         email: 'Email',
         password: 'Password',
@@ -312,7 +316,11 @@ function LanguageProvider({ children }) {
         reject_report_confirm: 'Reject Report?',
         reject_warning: 'Report will be rejected and user will be notified',
         reject_order_confirm: 'Reject Order?',
-        reject_order_warning: 'Order will be rejected and user will be notified'
+        reject_order_warning: 'Order will be rejected and user will be notified',
+        profile_incomplete_title: 'Profile Incomplete',
+        profile_incomplete_message: 'To create a report, you must complete your profile first. Make sure your name, email, phone number, address, and profile photo are all filled in.',
+        complete_profile_button: 'Complete Profile',
+        later_button: 'Later'
       })
     } finally {
       setLoading(false)
