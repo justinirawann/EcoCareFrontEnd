@@ -12,8 +12,8 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <div className="text-3xl">🌱</div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-8 h-8" />
+              <h1 className="text-2xl font-bold font-impact bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 EcoCare
               </h1>
             </div>
@@ -362,8 +362,8 @@ function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="text-2xl">🌱</div>
-                <h4 className="text-xl font-bold">EcoCare</h4>
+                <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-6 h-6" />
+                <h4 className="text-xl font-bold font-impact">EcoCare</h4>
               </div>
               <p className="text-gray-300 mb-4 max-w-md">
                 Platform digital terdepan untuk pengelolaan sampah berbasis masyarakat. 

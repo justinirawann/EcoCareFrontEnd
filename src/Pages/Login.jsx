@@ -4,10 +4,43 @@ import { Link, useNavigate } from "react-router-dom"
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" })
   const [rememberMe, setRememberMe] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value })
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: "" })
+    }
+    
+    // Real-time validation
+    if (field === "email" && value && !validateEmail(value)) {
+      setErrors({ ...errors, email: "Format email tidak valid" })
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate before submit
+    const newErrors = {}
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Format email tidak valid"
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
@@ -84,13 +117,18 @@ function Login() {
             <input
               type="email"
               placeholder="contoh@email.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
+                errors.email 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -98,16 +136,23 @@ function Login() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Masukkan password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
           </div>
 
           {/* Remember Me */}

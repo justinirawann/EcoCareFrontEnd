@@ -158,7 +158,7 @@ function EditProfile() {
             <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
             <input
               type="text"
-              placeholder="08123456789"
+              placeholder="Masukkan nomor telepon, Pastikan nomor telepon aktif."
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -169,7 +169,7 @@ function EditProfile() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
             <textarea
-              placeholder="Alamat lengkap"
+              placeholder="Alamat lengkap, pastikan alamat sudah akurat."
               className="w-full px-4 py-3 border rounded-xl min-h-[80px] focus:ring-2 focus:ring-green-500"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}

@@ -8,14 +8,67 @@ function Register() {
     password: "",
     confirmPassword: "",
   })
-
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/
+    return nameRegex.test(name) && name.trim().length >= 2
+  }
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value })
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: "" })
+    }
+    
+    // Real-time validation
+    if (field === "name" && value && !validateName(value)) {
+      setErrors({ ...errors, name: "Nama hanya boleh berisi huruf dan spasi" })
+    }
+    
+    if (field === "email" && value && !validateEmail(value)) {
+      setErrors({ ...errors, email: "Format email tidak valid" })
+    }
+    
+    if (field === "confirmPassword" && value && value !== formData.password) {
+      setErrors({ ...errors, confirmPassword: "Password tidak sama" })
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+    
+    // Validate before submit
+    const newErrors = {}
+    
+    if (!validateName(formData.name)) {
+      newErrors.name = "Nama hanya boleh berisi huruf dan spasi (min. 2 karakter)"
+    }
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Format email tidak valid"
+    }
+    
+    if (formData.password.length < 6) {
+      newErrors.password = "Password minimal 6 karakter"
+    }
+    
     if (formData.password !== formData.confirmPassword) {
-      alert("Password dan konfirmasi password tidak sama!")
+      newErrors.confirmPassword = "Password tidak sama"
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
 
@@ -83,13 +136,18 @@ function Register() {
             <input
               type="text"
               placeholder="Nama lengkap kamu"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
+                errors.name 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => handleInputChange("name", e.target.value)}
               required
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -100,13 +158,18 @@ function Register() {
             <input
               type="email"
               placeholder="contoh@email.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
+                errors.email 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -114,16 +177,30 @@ function Register() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Masukkan password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password (min. 6 karakter)"
+                className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition ${
+                  errors.password 
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                    : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+                }`}
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? "👁️" : "👁️🗨️"}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
 
           {/* Konfirmasi Password */}
@@ -131,16 +208,30 @@ function Register() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Konfirmasi Password
             </label>
-            <input
-              type="password"
-              placeholder="Ulangi password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
-              required
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Ulangi password"
+                className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition ${
+                  errors.confirmPassword 
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                    : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+                }`}
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showConfirmPassword ? "👁️" : "👁️🗨️"}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+            )}
           </div>
 
           {/* Button */}

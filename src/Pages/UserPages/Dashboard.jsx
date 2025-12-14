@@ -137,18 +137,16 @@ function Dashboard() {
         {/* Main Features */}
         <div className="mb-8">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Fitur Utama</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div 
               onClick={handleCreateReport}
               className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500 cursor-pointer"
             >
-              <div className="flex items-start gap-4">
-                <div className="text-5xl">📍</div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-800 mb-2">Buat Laporan Baru</h3>
-                  <p className="text-gray-600 text-sm">Laporkan tumpukan sampah atau masalah kebersihan di sekitar Anda dengan mudah</p>
-                  <span className="inline-block mt-3 text-green-600 font-semibold text-sm">→ Buat Sekarang</span>
-                </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl mb-3">📍</div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Buat Laporan Baru</h3>
+                <p className="text-gray-600 text-sm mb-3">Laporkan tumpukan sampah atau masalah kebersihan di sekitar Anda</p>
+                <span className="text-green-600 font-semibold text-sm">→ Buat Sekarang</span>
               </div>
             </div>
             
@@ -156,50 +154,48 @@ function Dashboard() {
               to="/dashboard/my-reports" 
               className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
             >
-              <div className="flex items-start gap-4">
-                <div className="text-5xl">📋</div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-800 mb-2">Laporan Saya</h3>
-                  <p className="text-gray-600 text-sm">Pantau status laporan Anda dan lihat feedback dari admin</p>
-                  <span className="inline-block mt-3 text-blue-600 font-semibold text-sm">→ Lihat Status</span>
-                </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl mb-3">📋</div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Laporan Saya</h3>
+                <p className="text-gray-600 text-sm mb-3">Pantau status laporan Anda dan lihat feedback dari admin</p>
+                <span className="text-blue-600 font-semibold text-sm">→ Lihat Status</span>
               </div>
             </Link>
-          </div>
-        </div>
 
-        {/* Additional Features */}
-        <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Fitur Lainnya</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div 
               onClick={handleCreateRecycling}
-              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500 cursor-pointer"
             >
-              <div className="text-3xl mb-3">♻️</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Jual Sampah Daur Ulang</h4>
-              <p className="text-gray-600 text-sm">Jual sampah daur ulang Anda dengan harga terbaik</p>
-              <span className="inline-block mt-2 text-green-600 font-semibold text-sm">→ Mulai Jual</span>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl mb-3">♻️</div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Jual Sampah Daur Ulang</h3>
+                <p className="text-gray-600 text-sm mb-3">Jual sampah daur ulang Anda dengan harga terbaik</p>
+                <span className="text-green-600 font-semibold text-sm">→ Mulai Jual</span>
+              </div>
             </div>
             
             <Link 
               to="/dashboard/my-recycling"
-              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
             >
-              <div className="text-3xl mb-3">📦</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Pesanan Daur Ulang</h4>
-              <p className="text-gray-600 text-sm">Lihat status pesanan daur ulang Anda</p>
-              <span className="inline-block mt-2 text-blue-600 font-semibold text-sm">→ Lihat Pesanan</span>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl mb-3">📦</div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Pesanan Daur Ulang</h3>
+                <p className="text-gray-600 text-sm mb-3">Lihat status pesanan daur ulang Anda</p>
+                <span className="text-blue-600 font-semibold text-sm">→ Lihat Pesanan</span>
+              </div>
             </Link>
-            
+
             <Link 
               to="/articles"
-              className="bg-white p-5 rounded-xl shadow hover:shadow-md transition cursor-pointer hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-purple-500"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-purple-500"
             >
-              <div className="text-3xl mb-3">📚</div>
-              <h4 className="font-semibold text-gray-800 mb-1">Artikel Edukasi</h4>
-              <p className="text-gray-600 text-sm">Tips & panduan menjaga lingkungan</p>
-              <span className="inline-block mt-2 text-purple-600 font-semibold text-sm">→ Baca Artikel</span>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl mb-3">📚</div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Artikel Edukasi</h3>
+                <p className="text-gray-600 text-sm mb-3">Tips & panduan menjaga lingkungan</p>
+                <span className="text-purple-600 font-semibold text-sm">→ Baca Artikel</span>
+              </div>
             </Link>
           </div>
         </div>
