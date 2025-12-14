@@ -2,7 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const LanguageContext = createContext()
 
-export const useLanguage = () => {
+// eslint-disable-next-line react-refresh/only-export-components
+const useLanguage = () => {
   const context = useContext(LanguageContext)
   if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider')
@@ -10,7 +11,7 @@ export const useLanguage = () => {
   return context
 }
 
-export const LanguageProvider = ({ children }) => {
+function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem('language') || 'id'
   })
@@ -41,7 +42,97 @@ export const LanguageProvider = ({ children }) => {
       console.error('Error fetching translations:', error)
       setError(error.message)
       // Use fallback translations if API fails
-      setTranslations({
+      setTranslations(locale === 'id' ? {
+        email: 'Email',
+        password: 'Password',
+        full_name: 'Nama Lengkap',
+        email_placeholder: 'contoh@email.com',
+        password_placeholder: 'Masukkan password',
+        name_placeholder: 'Nama lengkap kamu',
+        login_button: 'Masuk',
+        register_button: 'Daftar',
+        back_to_home: 'Kembali',
+        login_subtitle: 'Masuk untuk lanjutkan peduli lingkungan',
+        register_subtitle: 'Daftar untuk mulai peduli lingkungan',
+        remember_me: 'Ingat saya',
+        no_account: 'Belum punya akun?',
+        register_now: 'Daftar Sekarang',
+        already_have_account: 'Sudah punya akun?',
+        login_here: 'Masuk di sini',
+        password_confirmation: 'Konfirmasi Password',
+        password_confirmation_placeholder: 'Ulangi password',
+        password_min_6: 'Password (min. 6 karakter)',
+        hero_title_solution: 'Solusi',
+        hero_title_smart: 'Cerdas',
+        hero_title_waste: 'Pengelolaan Sampah',
+        dashboard_title: 'EcoCare',
+        edit_profile: 'Edit Profil',
+        logout: 'Keluar',
+        hello_user: 'Halo',
+        lets_protect_environment: 'Mari jaga lingkungan bersama',
+        protect_environment_together: 'Bersama Jaga Lingkungan!',
+        report_waste_contribute: 'Laporkan sampah, pantau status, dan berkontribusi untuk lingkungan yang lebih bersih',
+        main_features: 'Fitur Utama',
+        create_new_report: 'Buat Laporan Baru',
+        create_new_report_desc: 'Laporkan tumpukan sampah atau masalah kebersihan di sekitar Anda',
+        create_now: 'Buat Sekarang',
+        my_reports: 'Laporan Saya',
+        my_reports_desc: 'Pantau status laporan Anda dan lihat feedback dari admin',
+        view_status: 'Lihat Status',
+        sell_recycling_waste: 'Jual Sampah Daur Ulang',
+        sell_recycling_waste_desc: 'Jual sampah daur ulang Anda dengan harga terbaik',
+        start_selling: 'Mulai Jual',
+        recycling_orders: 'Pesanan Daur Ulang',
+        recycling_orders_desc: 'Lihat status pesanan daur ulang Anda',
+        view_orders: 'Lihat Pesanan',
+        educational_articles: 'Artikel Edukasi',
+        educational_articles_desc: 'Tips & panduan untuk melindungi lingkungan',
+        read_articles: 'Baca Artikel',
+        tips: 'Tips',
+        upload_clear_photo_tip: 'Pastikan foto yang Anda upload jelas dan deskripsi lengkap agar laporan dapat diproses dengan cepat!',
+        admin_dashboard_title: 'EcoCare Admin',
+        admin_dashboard: 'Dashboard Admin',
+        manage_ecocare_system: 'Kelola sistem EcoCare dengan kontrol penuh',
+        administrator_ecocare: 'Administrator EcoCare',
+        verify_reports: 'Verifikasi Laporan',
+        verify_reports_desc: 'Kelola laporan sampah dari masyarakat.',
+        manage_recycling: 'Kelola Daur Ulang',
+        manage_recycling_desc: 'Review pesanan daur ulang dan tentukan harga.',
+        manage_articles: 'Kelola Artikel',
+        manage_articles_desc: 'Buat, edit, dan hapus artikel edukasi.',
+        user_management: 'User Management',
+        user_management_desc: 'Kelola user dan petugas dengan password default.',
+        petugas_dashboard_title: 'EcoCare Petugas',
+        petugas_dashboard: 'Dashboard Petugas',
+        manage_waste_transport: 'Kelola tugas pengangkutan sampah dan laporan dengan efisien',
+        field_officer_ecocare: 'Petugas Lapangan EcoCare',
+        main_tasks: 'Tugas Utama',
+        report_tasks: 'Tugas Laporan',
+        report_tasks_desc: 'Kelola laporan sampah yang ditugaskan dan status pembayaran',
+        view_tasks: 'Lihat Tugas',
+        recycling_tasks: 'Tugas Daur Ulang',
+        recycling_tasks_desc: 'Kelola tugas penjemputan sampah daur ulang yang ditugaskan',
+        officer_info: 'Info Petugas',
+        update_report_status_tip: 'Pastikan untuk selalu update status laporan setelah menyelesaikan tugas pengangkutan sampah!',
+        back: 'Kembali',
+        loading: 'Memuat...',
+        cancel: 'Batal',
+        save: 'Simpan',
+        delete: 'Hapus',
+        delete_order: 'Hapus Pesanan',
+        delete_report_confirm: 'Hapus Laporan?',
+        delete_order_confirm: 'Hapus Pesanan?',
+        delete_warning: 'Tindakan ini tidak dapat dibatalkan',
+        report_deleted: 'Laporan berhasil dihapus',
+        order_deleted: 'Pesanan berhasil dihapus',
+        delete_failed: 'Gagal menghapus data',
+        pending_tasks: 'Tugas Tertunda',
+        no_pending_tasks: 'Tidak ada tugas tertunda',
+        reject_report_confirm: 'Tolak Laporan?',
+        reject_warning: 'Laporan akan ditolak dan user akan mendapat notifikasi',
+        reject_order_confirm: 'Tolak Pesanan?',
+        reject_order_warning: 'Pesanan akan ditolak dan user akan mendapat notifikasi'
+      } : {
         email: 'Email',
         password: 'Password',
         full_name: 'Full Name',
@@ -203,169 +294,25 @@ export const LanguageProvider = ({ children }) => {
         back_to_articles: 'Back to Articles',
         view_other_articles: 'View Other Articles',
         
-        // Report Verification (Admin)
-        manage_reports_title: 'Manage Reports',
+        // Additional fallback keys
         back: 'Back',
         loading: 'Loading...',
-        report_title: 'Title',
-        reporter: 'Reporter',
-        status: 'Status',
-        assigned_officer: 'Officer',
-        fee: 'Fee',
-        actions: 'Actions',
-        verify: 'Verify',
-        revision: 'Revision',
-        reject: 'Reject',
-        assign_officer: 'Assign Officer',
-        verify_report_modal: 'Verify Report',
-        write_notes_placeholder: 'Write notes for user...',
-        fee_info: 'Fee will be determined by officer after direct consultation with user',
-        verify_button: 'Verify',
-        send_revision: 'Send Revision',
         cancel: 'Cancel',
-        assign_officer_modal: 'Assign Officer',
-        select_officer: 'Select Officer',
-        assign: 'Assign',
-        photo_report: 'Report Photo',
-        close: 'Close',
-        status_updated: 'Status updated successfully!',
-        revision_sent: 'Revision notes sent successfully!',
-        officer_assigned: 'Officer assigned successfully!',
-        update_status_failed: 'Failed to update status',
-        send_revision_failed: 'Failed to send revision',
-        assign_officer_failed: 'Failed to assign officer',
-        select_officer_first: 'Please select an officer first',
-        
-        // Recycling Management (Admin)
-        manage_recycling_title: 'Manage Recycling Orders',
-        loading_orders: 'Loading orders...',
-        waste_photo: 'Waste Photo',
-        no_description: 'No description',
-        pickup_address: 'Pickup Address',
-        price_per_kg_label: 'Price per kg (Rp)',
-        price_per_kg_placeholder: 'Enter price per kg',
-        admin_notes: 'Admin Notes',
-        admin_notes_placeholder: 'Notes for user',
-        approve: 'Approve',
-        reject: 'Reject',
-        cancel: 'Cancel',
-        review_order: 'Review Order',
-        select_officer_label: 'Select Officer',
-        select_officer_placeholder: 'Select officer...',
-        assign_task: 'Assign',
-        assign_officer_button: '🚛 Assign Officer',
-        price_per_kg: 'Price per kg',
-        total_price: 'Total Price',
-        assigned_officer_label: 'Assigned Officer',
-        order_approved: 'Order approved successfully!',
-        order_rejected: 'Order rejected!',
-        officer_assigned: 'Officer assigned successfully!',
-        
-        // Article Management (Admin)
-        manage_articles_title: 'Manage Articles',
-        add_article: 'Add Article',
-        add_article_short: '+ Add',
-        failed_load_articles: 'Failed to load articles',
-        no_articles_yet: 'No articles yet. Start by creating a new article!',
-        article: 'Article',
-        author: 'Author',
-        date: 'Date',
-        published: 'Published',
-        draft: 'Draft',
-        unknown: 'Unknown',
-        confirm_delete_article: 'Are you sure you want to delete this article?',
-        article_deleted: 'Article deleted successfully',
-        failed_delete_article: 'Failed to delete article',
-        edit_article: 'Edit Article',
-        add_new_article: 'Add New Article',
-        article_title: 'Article Title *',
-        content: 'Content *',
-        article_image: 'Article Image',
-        current_image: 'Current image',
-        click_select_image: 'Click to select image',
-        created_date: 'Created Date',
-        creation_date_auto: 'Article creation date (automatic)',
-        publish_date: 'Publish Date',
-        empty_for_draft: 'Leave empty to save as draft',
-        save_article: 'Save Article',
-        failed_save_article: 'Failed to save article',
-        
-        // User Management (Admin)
-        user_management_title: 'User Management',
-        add_user: 'Add User',
-        add_user_short: '+ Add',
-        failed_load_users: 'Failed to load users',
-        no_users_yet: 'No users yet.',
-        user: 'User',
-        role: 'Role',
-        contact: 'Contact',
-        confirm_delete_user: 'Are you sure you want to delete this user?',
-        user_deleted: 'User deleted successfully',
-        failed_delete_user: 'Failed to delete user',
-        confirm_reset_password: 'Reset password to default?',
-        password_reset: 'Password reset to:',
-        failed_reset_password: 'Failed to reset password',
-        reset: 'Reset',
-        edit_user: 'Edit User',
-        add_user_title: 'Add User',
-        name: 'Name',
-        phone: 'Phone',
-        address: 'Address',
-        default_password_info: 'Default password: User = 12345678, Officer = petugas123, Admin = admin123',
-        update: 'Update',
         save: 'Save',
-        
-        // Officer Report Tasks
-        my_report_tasks_title: 'My Report Tasks',
-        manage_assigned_reports: 'Manage reports assigned to you',
-        failed_load_report_tasks: 'Failed to load report tasks',
-        no_report_tasks: 'No report tasks assigned yet.',
-        report: 'Report',
-        payment: 'Payment',
-        set_fee: 'Set Fee',
-        edit_fee: 'Edit Fee',
-        paid: 'Paid',
-        unpaid: 'Unpaid',
-        mark_paid: 'Mark Paid',
-        mark_unpaid: 'Mark Unpaid',
-        complete: 'Complete',
-        completed: '✓ Completed',
-        set_fee_modal: 'Set Negotiated Fee',
-        edit_fee_modal: 'Edit Fee',
-        fee_after_negotiation: 'Fee After Negotiation (Rp)',
-        enter_negotiated_fee: 'Enter negotiated fee amount',
-        consult_user_tip: 'Consult with user on-site to determine appropriate fee',
-        save_fee: 'Save Fee',
-        complete_report_modal: 'Complete Report?',
-        ensure_work_done: 'Make sure all work is done and user is satisfied with the result!',
-        yes_complete: 'Yes, Complete',
-        payment_status_updated: 'Payment status successfully changed to',
-        failed_update_payment: 'Failed to update payment status',
-        enter_valid_fee: 'Enter a valid fee amount',
-        fee_updated: 'Fee updated successfully',
-        failed_update_fee: 'Failed to update fee',
-        report_completed: 'Report completed successfully',
-        failed_complete_report: 'Failed to complete report',
-        
-        // Officer Recycling Tasks
-        recycling_pickup_tasks: 'Recycling Pickup Tasks',
-        loading_tasks: 'Loading tasks...',
-        no_tasks: 'No Tasks',
-        no_recycling_tasks: 'You have no recycling pickup tasks yet',
-        pickup_address: 'Pickup Address',
-        price_per_kg: 'Price per kg',
-        weight: 'Weight',
-        total_value: 'Total Value',
-        payment_status: 'Payment Status',
-        admin_notes: 'Admin Notes',
-        mark_paid_button: '💰 Mark Paid',
-        mark_unpaid_button: '❌ Mark Unpaid',
-        complete_pickup: '✅ Complete Pickup',
-        ensure_payment_tip: 'Make sure user has paid before completing pickup',
-        pickup_completed: '✅ Pickup completed',
-        created: 'Created:',
-        order_completed: 'Order completed successfully!',
-        failed_complete_order: 'Failed to complete order'
+        delete: 'Delete',
+        delete_order: 'Delete Order',
+        delete_report_confirm: 'Delete Report?',
+        delete_order_confirm: 'Delete Order?',
+        delete_warning: 'This action cannot be undone',
+        report_deleted: 'Report successfully deleted',
+        order_deleted: 'Order successfully deleted',
+        delete_failed: 'Failed to delete data',
+        pending_tasks: 'Pending Tasks',
+        no_pending_tasks: 'No pending tasks',
+        reject_report_confirm: 'Reject Report?',
+        reject_warning: 'Report will be rejected and user will be notified',
+        reject_order_confirm: 'Reject Order?',
+        reject_order_warning: 'Order will be rejected and user will be notified'
       })
     } finally {
       setLoading(false)
@@ -373,14 +320,14 @@ export const LanguageProvider = ({ children }) => {
   }
 
   const changeLanguage = async (newLanguage) => {
-    setLoading(true)
+    // Don't set loading to true to avoid UI flicker
     setLanguage(newLanguage)
     localStorage.setItem('language', newLanguage)
     await fetchTranslations(newLanguage)
   }
 
   const t = (key, fallback) => {
-    if (loading) return fallback || key
+    // Always return translation or fallback, don't wait for loading
     return translations[key] || fallback || key
   }
 
@@ -405,3 +352,6 @@ export const LanguageProvider = ({ children }) => {
     </LanguageContext.Provider>
   )
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { useLanguage, LanguageProvider }

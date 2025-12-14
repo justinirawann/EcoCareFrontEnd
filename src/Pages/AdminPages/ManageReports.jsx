@@ -18,6 +18,8 @@ function ManageReports() {
   const [selectedPhoto, setSelectedPhoto] = useState(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [reportToDelete, setReportToDelete] = useState(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [reportToReject, setReportToReject] = useState(null)
 
   useEffect(() => {
     fetchReports()
@@ -159,6 +161,21 @@ function ManageReports() {
     setShowDeleteModal(true)
   }
 
+  const openRejectModal = (report) => {
+    setReportToReject(report)
+    setShowRejectModal(true)
+  }
+
+  const handleRejectReport = async () => {
+    try {
+      await handleVerify(reportToReject.id, "rejected")
+      setShowRejectModal(false)
+      setReportToReject(null)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleDeleteReport = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
@@ -256,7 +273,7 @@ function ManageReports() {
                       {t('revision')}
                     </button>
                     <button
-                      onClick={() => handleVerify(report.id, "rejected")}
+                      onClick={() => openRejectModal(report)}
                       className="flex-1 bg-red-500 text-white px-3 py-2 rounded text-sm hover:bg-red-600"
                     >
                       {t('reject')}
@@ -342,7 +359,7 @@ function ManageReports() {
                               {t('revision')}
                             </button>
                             <button
-                              onClick={() => handleVerify(report.id, "rejected")}
+                              onClick={() => openRejectModal(report)}
                               className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
                             >
                               {t('reject')}
@@ -530,6 +547,41 @@ function ManageReports() {
                 className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
               >
                 {t('delete')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Modal konfirmasi reject */}
+    {showRejectModal && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full border-2 border-red-200">
+          <div className="text-center">
+            <div className="text-6xl mb-4">❌</div>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">{t('reject_report_confirm')}</h2>
+            <p className="text-gray-600 mb-2">
+              <strong>{reportToReject?.title}</strong>
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              {t('reject_warning')}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowRejectModal(false)
+                  setReportToReject(null)
+                }}
+                className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleRejectReport}
+                className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+              >
+                {t('reject')}
               </button>
             </div>
           </div>

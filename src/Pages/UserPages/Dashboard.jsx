@@ -70,7 +70,10 @@ function Dashboard() {
       <div className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-green-700">♻️ {t('dashboard_title')}</h1>
+            <div className="flex items-center space-x-2">
+              <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-6 h-6" />
+              <h1 className="text-2xl font-bold text-green-700 font-impact">{t('dashboard_title')}</h1>
+            </div>
             <LanguageSwitcher />
           </div>
           

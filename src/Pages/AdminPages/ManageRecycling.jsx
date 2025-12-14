@@ -14,6 +14,8 @@ function ManageRecycling() {
   const [priceData, setPriceData] = useState({ price_per_kg: '', admin_notes: '' })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [orderToDelete, setOrderToDelete] = useState(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [orderToReject, setOrderToReject] = useState(null)
 
   useEffect(() => {
     fetchOrders()
@@ -121,6 +123,21 @@ function ManageRecycling() {
   const openDeleteModal = (order) => {
     setOrderToDelete(order)
     setShowDeleteModal(true)
+  }
+
+  const openRejectModal = (order) => {
+    setOrderToReject(order)
+    setShowRejectModal(true)
+  }
+
+  const handleRejectOrder = async () => {
+    try {
+      await handleReject(orderToReject.id)
+      setShowRejectModal(false)
+      setOrderToReject(null)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleDeleteOrder = async () => {
@@ -251,7 +268,7 @@ function ManageRecycling() {
                           {t('approve')}
                         </button>
                         <button
-                          onClick={() => handleReject(order.id)}
+                          onClick={() => openRejectModal(order)}
                           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
                         >
                           {t('reject')}
@@ -387,6 +404,41 @@ function ManageRecycling() {
                     className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
                   >
                     {t('delete')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal konfirmasi reject */}
+        {showRejectModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full border-2 border-red-200">
+              <div className="text-center">
+                <div className="text-6xl mb-4">❌</div>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">{t('reject_order_confirm')}</h2>
+                <p className="text-gray-600 mb-2">
+                  <strong>{orderToReject?.category} - {orderToReject?.weight} kg</strong>
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  {t('reject_warning')}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowRejectModal(false)
+                      setOrderToReject(null)
+                    }}
+                    className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    onClick={handleRejectOrder}
+                    className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+                  >
+                    {t('reject')}
                   </button>
                 </div>
               </div>

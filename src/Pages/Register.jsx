@@ -122,9 +122,12 @@ function Register() {
 
         {/* Brand */}
         <div className="text-center mb-6 mt-4">
-          <h1 className="text-3xl font-extrabold text-green-700">EcoCare</h1>
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-8 h-8" />
+            <h1 className="text-3xl font-extrabold text-green-700 font-impact">EcoCare</h1>
+          </div>
           <p className="text-gray-500 mt-1">
-            {t('register_subtitle')} 🌱
+            {t('register_subtitle')}
           </p>
         </div>
 

@@ -7,13 +7,44 @@ import LanguageSwitcher from '../../components/LanguageSwitcher'
 function AdminDashboard() {
   const [user, setUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [pendingReports, setPendingReports] = useState(0)
+  const [pendingRecycling, setPendingRecycling] = useState(0)
   const navigate = useNavigate()
   const { t } = useLanguage()
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
     setUser(savedUser)
+    fetchPendingCounts()
   }, [])
+
+  const fetchPendingCounts = async () => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      
+      // Fetch pending reports
+      const reportsResponse = await fetch('http://127.0.0.1:8000/api/admin/reports', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (reportsResponse.ok) {
+        const reportsData = await reportsResponse.json()
+        const pending = reportsData.data.filter(report => report.status === 'pending').length
+        setPendingReports(pending)
+      }
+
+      // Fetch pending recycling orders
+      const recyclingResponse = await fetch('http://127.0.0.1:8000/api/admin/recycling', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (recyclingResponse.ok) {
+        const recyclingData = await recyclingResponse.json()
+        const pending = recyclingData.data.filter(order => order.status === 'pending').length
+        setPendingRecycling(pending)
+      }
+    } catch (error) {
+      console.error('Error fetching pending counts:', error)
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -29,7 +60,10 @@ function AdminDashboard() {
       <div className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-red-700">🏛️ {t('admin_dashboard_title')}</h1>
+            <div className="flex items-center space-x-2">
+              <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-6 h-6" />
+              <h1 className="text-2xl font-bold text-red-700 font-impact">{t('admin_dashboard_title')}</h1>
+            </div>
             <LanguageSwitcher />
           </div>
           
@@ -100,8 +134,13 @@ function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div 
             onClick={() => navigate("/admin/reports")}
-            className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition"
+            className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition relative"
           >
+            {pendingReports > 0 && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                {pendingReports}
+              </div>
+            )}
             <h3 className="text-lg font-semibold text-green-700">📝 {t('verify_reports')}</h3>
             <p className="text-gray-700 mt-1">
               {t('verify_reports_desc')}
@@ -110,8 +149,13 @@ function AdminDashboard() {
 
           <div 
             onClick={() => navigate("/admin/recycling")}
-            className="p-6 border rounded-xl bg-blue-100 cursor-pointer hover:bg-blue-200 transition"
+            className="p-6 border rounded-xl bg-blue-100 cursor-pointer hover:bg-blue-200 transition relative"
           >
+            {pendingRecycling > 0 && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                {pendingRecycling}
+              </div>
+            )}
             <h3 className="text-lg font-semibold text-blue-700">♻️ {t('manage_recycling')}</h3>
             <p className="text-gray-700 mt-1">
               {t('manage_recycling_desc')}

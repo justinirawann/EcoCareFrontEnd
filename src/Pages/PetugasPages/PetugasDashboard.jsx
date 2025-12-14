@@ -7,13 +7,44 @@ import LanguageSwitcher from '../../components/LanguageSwitcher'
 function PetugasDashboard() {
   const [user, setUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [pendingReports, setPendingReports] = useState(0)
+  const [pendingRecycling, setPendingRecycling] = useState(0)
   const navigate = useNavigate()
   const { t } = useLanguage()
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
     setUser(savedUser)
+    fetchPendingCounts()
   }, [])
+
+  const fetchPendingCounts = async () => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      
+      // Fetch pending reports
+      const reportsResponse = await fetch('http://127.0.0.1:8000/api/petugas/report-tasks', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (reportsResponse.ok) {
+        const reportsData = await reportsResponse.json()
+        const pending = reportsData.data.filter(report => report.status !== 'completed').length
+        setPendingReports(pending)
+      }
+
+      // Fetch pending recycling tasks
+      const recyclingResponse = await fetch('http://127.0.0.1:8000/api/petugas/recycling-tasks', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (recyclingResponse.ok) {
+        const recyclingData = await recyclingResponse.json()
+        const pending = recyclingData.tasks.filter(task => task.status !== 'Selesai').length
+        setPendingRecycling(pending)
+      }
+    } catch (error) {
+      console.error('Error fetching pending counts:', error)
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -30,7 +61,10 @@ function PetugasDashboard() {
         <div className="bg-white shadow-sm border-b sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-blue-700">🚛 {t('petugas_dashboard_title')}</h1>
+              <div className="flex items-center space-x-2">
+              <img src="/ecocarelogo.png" alt="EcoCare Logo" className="w-6 h-6" />
+              <h1 className="text-2xl font-bold text-blue-700 font-impact">{t('petugas_dashboard_title')}</h1>
+            </div>
               <LanguageSwitcher />
             </div>
             
@@ -104,8 +138,13 @@ function PetugasDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Link 
                 to="/petugas/report-tasks"
-                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
+                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500 relative"
               >
+                {pendingReports > 0 && (
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                    {pendingReports}
+                  </div>
+                )}
                 <div className="flex items-start gap-4">
                   <div className="text-5xl">📋</div>
                   <div className="flex-1">
@@ -118,8 +157,13 @@ function PetugasDashboard() {
               
               <Link 
                 to="/petugas/recycling-tasks"
-                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
+                className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500 relative"
               >
+                {pendingRecycling > 0 && (
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                    {pendingRecycling}
+                  </div>
+                )}
                 <div className="flex items-start gap-4">
                   <div className="text-5xl">♻️</div>
                   <div className="flex-1">
