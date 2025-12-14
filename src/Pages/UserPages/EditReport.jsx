@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function EditReport() {
   const [title, setTitle] = useState("")
@@ -13,6 +14,7 @@ function EditReport() {
 
   const navigate = useNavigate()
   const { id } = useParams()
+  const { t } = useLanguage()
 
   useEffect(() => {
     fetchReport()
@@ -82,18 +84,18 @@ function EditReport() {
     }
   }
 
-  if (loading) return <div className="min-h-screen bg-green-100 p-6">Loading...</div>
+  if (loading) return <div className="min-h-screen bg-green-100 p-6">{t('loading')}...</div>
 
   return (
     <div className="min-h-screen bg-green-100 flex justify-center items-center p-6">
       <div className="bg-white w-full max-w-lg shadow-xl rounded-2xl p-8 border border-green-200">
         <h1 className="text-3xl font-extrabold text-green-700 text-center mb-6">
-          Edit Laporan ✏️
+          {t('edit_report_title')} ✏️
         </h1>
 
         {adminNotes && (
           <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-            <p className="text-sm font-semibold text-yellow-800 mb-1">💬 Catatan dari Admin:</p>
+            <p className="text-sm font-semibold text-yellow-800 mb-1">💬 {t('admin_notes')}</p>
             <p className="text-sm text-yellow-700">{adminNotes}</p>
           </div>
         )}
@@ -101,10 +103,10 @@ function EditReport() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Judul */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('title')}</label>
             <input
               type="text"
-              placeholder="Misal: Sampah menumpuk..."
+              placeholder={t('title_placeholder')}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -114,10 +116,10 @@ function EditReport() {
 
           {/* Lokasi */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')}</label>
             <input
               type="text"
-              placeholder="Misal: Jl. Melati No. 20"
+              placeholder={t('location_placeholder')}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -127,9 +129,9 @@ function EditReport() {
 
           {/* Deskripsi */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')}</label>
             <textarea
-              placeholder="Ceritakan kondisi sampah..."
+              placeholder={t('description_placeholder')}
               className="w-full px-4 py-3 border rounded-xl min-h-[100px] focus:ring-2 focus:ring-green-500"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -138,7 +140,7 @@ function EditReport() {
 
           {/* Foto */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('photo')}</label>
             {photoPreview ? (
               <div className="mb-3">
                 <img 
@@ -155,14 +157,14 @@ function EditReport() {
                   alt="Current" 
                   className="w-full max-w-sm rounded-lg border-2 border-gray-200"
                 />
-                <p className="text-xs text-gray-500 mt-1">Foto saat ini</p>
+                <p className="text-xs text-gray-500 mt-1">{t('current_photo')}</p>
               </div>
             )}
             <label className="cursor-pointer">
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition">
                 <div className="text-4xl mb-2">📷</div>
-                <p className="text-sm text-gray-600 font-medium">Klik untuk pilih foto</p>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Max 2MB)</p>
+                <p className="text-sm text-gray-600 font-medium">{t('click_to_select_photo')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('photo_format_info')}</p>
               </div>
               <input
                 type="file"
@@ -185,14 +187,14 @@ function EditReport() {
               type="submit"
               className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-green-700"
             >
-              Update Laporan
+              {t('update_report')}
             </button>
             <button
               type="button"
               onClick={() => navigate("/dashboard/my-reports")}
               className="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-lg hover:bg-gray-600"
             >
-              Batal
+              {t('cancel')}
             </button>
           </div>
         </form>

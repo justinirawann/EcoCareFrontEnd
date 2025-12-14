@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function CreateRecyclingOrder() {
   const [formData, setFormData] = useState({
@@ -11,7 +12,9 @@ function CreateRecyclingOrder() {
   })
   const [imagePreview, setImagePreview] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const categories = ['Logam', 'Minyak', 'Kertas', 'Elektronik', 'Besi', 'Kaca', 'Plastik']
 
@@ -96,38 +99,78 @@ function CreateRecyclingOrder() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
-            Jual Sampah Daur Ulang ♻️
+            {t('sell_recycling_waste_title')} ♻️
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" onClick={(e) => {
+            if (!e.target.closest('.relative')) {
+              setIsDropdownOpen(false)
+            }
+          }}>
             {/* Kategori Sampah */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kategori Sampah *
+                {t('waste_category')}
               </label>
-              <select
-                className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                required
-              >
-                <option value="">Pilih kategori sampah</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-left focus:ring-2 focus:ring-green-500 focus:border-green-500 flex justify-between items-center hover:border-gray-400 transition-colors"
+                >
+                  <span className={formData.category ? 'text-gray-900' : 'text-gray-500'}>
+                    {formData.category || t('select_waste_category')}
+                  </span>
+                  <svg className={`w-5 h-5 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {isDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto">
+                    <div className="py-1">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, category: cat })
+                            setIsDropdownOpen(false)
+                          }}
+                          className={`w-full text-left px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors ${
+                            formData.category === cat ? 'bg-green-100 text-green-800 font-medium' : 'text-gray-900'
+                          }`}
+                        >
+                          <div className="flex items-center">
+                            <span className="mr-3">
+                              {cat === 'Logam' && '🔩'}
+                              {cat === 'Minyak' && '🛢️'}
+                              {cat === 'Kertas' && '📄'}
+                              {cat === 'Elektronik' && '📱'}
+                              {cat === 'Besi' && '⚙️'}
+                              {cat === 'Kaca' && '🪟'}
+                              {cat === 'Plastik' && '🥤'}
+                            </span>
+                            {cat}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Berat */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Berat (kg) *
+                {t('weight_kg')}
               </label>
               <input
                 type="number"
                 step="0.1"
                 min="0.1"
-                placeholder="Masukkan berat dalam kg"
+                placeholder={t('weight_placeholder')}
                 className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
                 value={formData.weight}
                 onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
@@ -138,7 +181,7 @@ function CreateRecyclingOrder() {
             {/* Gambar Sampah */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Foto Sampah *
+                {t('waste_photo')}
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center">
                 {imagePreview ? (
@@ -148,12 +191,12 @@ function CreateRecyclingOrder() {
                       alt="Preview"
                       className="w-32 h-32 object-cover rounded-lg mx-auto mb-4"
                     />
-                    <p className="text-sm text-gray-600 mb-2">Foto sampah berhasil dipilih</p>
+                    <p className="text-sm text-gray-600 mb-2">{t('photo_selected_success')}</p>
                   </div>
                 ) : (
                   <div>
                     <div className="text-4xl mb-2">📷</div>
-                    <p className="text-gray-600 mb-2">Pilih foto sampah</p>
+                    <p className="text-gray-600 mb-2">{t('select_waste_photo')}</p>
                   </div>
                 )}
                 <input
@@ -168,7 +211,7 @@ function CreateRecyclingOrder() {
                   htmlFor="image-upload"
                   className="cursor-pointer bg-green-100 text-green-700 px-4 py-2 rounded-lg hover:bg-green-200 transition-colors"
                 >
-                  {imagePreview ? 'Ganti Foto' : 'Pilih Foto'}
+                  {imagePreview ? t('change_photo') : t('select_photo')}
                 </label>
               </div>
             </div>
@@ -176,10 +219,10 @@ function CreateRecyclingOrder() {
             {/* Deskripsi */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Deskripsi Sampah
+                {t('waste_description')}
               </label>
               <textarea
-                placeholder="Jelaskan kondisi dan jenis sampah secara detail"
+                placeholder={t('waste_description_placeholder')}
                 className="w-full px-4 py-3 border rounded-xl min-h-[100px] focus:ring-2 focus:ring-green-500"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -189,10 +232,10 @@ function CreateRecyclingOrder() {
             {/* Alamat Penjemputan */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Alamat Penjemputan *
+                {t('pickup_address')}
               </label>
               <textarea
-                placeholder="Alamat lengkap untuk penjemputan sampah"
+                placeholder={t('pickup_address_placeholder')}
                 className="w-full px-4 py-3 border rounded-xl min-h-[80px] focus:ring-2 focus:ring-green-500"
                 value={formData.pickup_address}
                 onChange={(e) => setFormData({ ...formData, pickup_address: e.target.value })}
@@ -204,26 +247,25 @@ function CreateRecyclingOrder() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !formData.category}
                 className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-green-700 disabled:opacity-50"
               >
-                {loading ? "Mengirim..." : "Kirim Pesanan"}
+                {loading ? t('sending') : t('send_order')}
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/dashboard")}
                 className="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-lg hover:bg-gray-600"
               >
-                Batal
+                {t('cancel')}
               </button>
             </div>
           </form>
 
           <div className="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
-            <h4 className="font-bold text-blue-900 mb-2">💡 Info</h4>
+            <h4 className="font-bold text-blue-900 mb-2">💡 {t('info')}</h4>
             <p className="text-blue-800 text-sm">
-              Admin akan menentukan harga per kg berdasarkan kategori dan kondisi sampah. 
-              Petugas akan dijadwalkan untuk menjemput sampah di alamat yang Anda berikan.
+              {t('admin_price_info')}
             </p>
           </div>
         </div>

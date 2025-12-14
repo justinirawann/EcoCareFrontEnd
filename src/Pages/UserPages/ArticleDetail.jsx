@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function ArticleDetail() {
   const [article, setArticle] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const { id } = useParams()
+  const { t } = useLanguage()
 
   useEffect(() => {
     fetchArticle()
@@ -35,7 +37,7 @@ function ArticleDetail() {
       <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading artikel...</p>
+          <p className="mt-4 text-gray-600">{t('loading_articles')}</p>
         </div>
       </div>
     )
@@ -45,12 +47,12 @@ function ArticleDetail() {
     return (
       <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 text-lg">Artikel tidak ditemukan</p>
+          <p className="text-gray-500 text-lg">{t('article_not_found')}</p>
           <button
             onClick={() => navigate("/articles")}
             className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
           >
-            Kembali ke Artikel
+            {t('back_to_articles')}
           </button>
         </div>
       </div>
@@ -62,12 +64,12 @@ function ArticleDetail() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-green-700">📚 Artikel Edukasi</h1>
+          <h1 className="text-xl font-bold text-green-700">📚 {t('articles_title')}</h1>
           <button
             onClick={() => navigate("/articles")}
             className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
           >
-            Kembali
+            {t('back')}
           </button>
         </div>
       </div>
@@ -92,7 +94,7 @@ function ArticleDetail() {
             
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b">
-              <span>📝 Oleh: {article.user?.name}</span>
+              <span>📝 {t('by_author')} {article.user?.name}</span>
               <span>📅 {new Date(article.published_at).toLocaleDateString('id-ID', {
                 weekday: 'long',
                 year: 'numeric',
@@ -123,7 +125,7 @@ function ArticleDetail() {
             onClick={() => navigate("/articles")}
             className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
           >
-            ← Lihat Artikel Lainnya
+            ← {t('view_other_articles')}
           </button>
         </div>
       </div>

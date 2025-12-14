@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ManageArticles() {
   const [articles, setArticles] = useState([]);
@@ -9,6 +10,7 @@ export default function ManageArticles() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchArticles();
@@ -38,7 +40,7 @@ export default function ManageArticles() {
       }
       setError('');
     } catch (err) {
-      setError('Gagal memuat artikel');
+      setError(t('failed_load_articles'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -47,7 +49,7 @@ export default function ManageArticles() {
 
   // ========== DELETE ARTICLE ==========
   const handleDelete = async (articleId) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) return;
+    if (!window.confirm(t('confirm_delete_article'))) return;
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -61,10 +63,10 @@ export default function ManageArticles() {
 
       if (!response.ok) throw new Error('Delete failed');
 
-      setSuccess('Artikel berhasil dihapus');
+      setSuccess(t('article_deleted'));
       fetchArticles();
     } catch (err) {
-      setError('Gagal menghapus artikel');
+      setError(t('failed_delete_article'));
       console.error(err);
     }
   };
@@ -99,16 +101,16 @@ export default function ManageArticles() {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                <span className="hidden sm:inline">Kembali</span>
+                <span className="hidden sm:inline">{t('back')}</span>
               </button>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">📰 Kelola Artikel</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">📰 {t('manage_articles_title')}</h1>
             </div>
             <button
               onClick={() => setShowForm(true)}
               className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
             >
-              <span className="sm:hidden">+ Tambah</span>
-              <span className="hidden sm:inline">+ Tambah Artikel</span>
+              <span className="sm:hidden">{t('add_article_short')}</span>
+              <span className="hidden sm:inline">{t('add_article')}</span>
             </button>
           </div>
         </div>
@@ -130,14 +132,14 @@ export default function ManageArticles() {
           <div className="text-center py-12">
             <div className="inline-block">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-              <p className="mt-4 text-gray-600 font-medium">Loading...</p>
+              <p className="mt-4 text-gray-600 font-medium">{t('loading')}</p>
             </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             {articles.length === 0 ? (
               <div className="p-12 text-center">
-                <p className="text-gray-500 text-lg">Belum ada artikel. Mulai dengan membuat artikel baru!</p>
+                <p className="text-gray-500 text-lg">{t('no_articles_yet')}</p>
               </div>
             ) : (
               <>
@@ -155,14 +157,14 @@ export default function ManageArticles() {
                       )}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-gray-900 line-clamp-2">{article.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{article.user?.name || 'Unknown'}</p>
+                        <p className="text-sm text-gray-500 mt-1">{article.user?.name || t('unknown')}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             article.published_at 
                               ? 'bg-green-100 text-green-800' 
                               : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {article.published_at ? 'Published' : 'Draft'}
+                            {article.published_at ? t('published') : t('draft')}
                           </span>
                           <span className="text-xs text-gray-500">
                             {new Date(article.created_at).toLocaleDateString('id-ID')}
@@ -175,13 +177,13 @@ export default function ManageArticles() {
                         onClick={() => handleEdit(article)}
                         className="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm"
                       >
-                        Edit
+                        {t('edit')}
                       </button>
                       <button
                         onClick={() => handleDelete(article.id)}
                         className="flex-1 bg-red-500 text-white px-3 py-2 rounded text-sm"
                       >
-                        Hapus
+                        {t('delete')}
                       </button>
                     </div>
                   </div>
@@ -214,13 +216,13 @@ export default function ManageArticles() {
                             )}
                             <div className="flex-1 min-w-0">
                               <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{article.title}</h3>
-                              <p className="text-sm text-gray-500 mt-1 md:hidden">{article.user?.name || 'Unknown'}</p>
-                              <p className="text-xs lg:text-sm text-gray-500 mt-1 line-clamp-1 lg:line-clamp-2">{article.description || 'Tidak ada deskripsi'}</p>
+                              <p className="text-sm text-gray-500 mt-1 md:hidden">{article.user?.name || t('unknown')}</p>
+                              <p className="text-xs lg:text-sm text-gray-500 mt-1 line-clamp-1 lg:line-clamp-2">{article.description || t('no_description')}</p>
                             </div>
                           </div>
                         </td>
                         <td className="hidden md:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{article.user?.name || 'Unknown'}</div>
+                          <div className="text-sm text-gray-900">{article.user?.name || t('unknown')}</div>
                         </td>
                         <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -228,7 +230,7 @@ export default function ManageArticles() {
                               ? 'bg-green-100 text-green-800' 
                               : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {article.published_at ? 'Published' : 'Draft'}
+                            {article.published_at ? t('published') : t('draft')}
                           </span>
                           <div className="lg:hidden text-xs text-gray-500 mt-1">
                             {new Date(article.created_at).toLocaleDateString('id-ID')}
@@ -243,13 +245,13 @@ export default function ManageArticles() {
                               onClick={() => handleEdit(article)}
                               className="text-blue-600 hover:text-blue-900 text-xs lg:text-sm"
                             >
-                              Edit
+                              {t('edit')}
                             </button>
                             <button
                               onClick={() => handleDelete(article.id)}
                               className="text-red-600 hover:text-red-900 text-xs lg:text-sm"
                             >
-                              Hapus
+                              {t('delete')}
                             </button>
                           </div>
                         </td>
@@ -279,6 +281,7 @@ export default function ManageArticles() {
 //           ARTICLE FORM
 // ===================================
 function ArticleForm({ article, onClose, onSubmit }) {
+  const { t } = useLanguage();
   const getCurrentDateTime = () => {
     const now = new Date();
     return now.toISOString().slice(0, 16);
@@ -355,7 +358,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Gagal menyimpan artikel');
+        throw new Error(data.message || t('failed_save_article'));
       }
 
       onSubmit();
@@ -373,7 +376,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
-            {article ? '✏️ Edit Artikel' : '✍️ Tambah Artikel Baru'}
+            {article ? `✏️ ${t('edit_article')}` : `✍️ ${t('add_new_article')}`}
           </h2>
           <button
             onClick={onClose}
@@ -392,7 +395,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
           )}
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Judul Artikel *</label>
+            <label className="block text-sm font-semibold mb-2">{t('article_title')}</label>
             <input
               name="title"
               required
@@ -403,7 +406,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Deskripsi</label>
+            <label className="block text-sm font-semibold mb-2">{t('description')}</label>
             <textarea
               name="description"
               value={formData.description}
@@ -414,7 +417,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Konten *</label>
+            <label className="block text-sm font-semibold mb-2">{t('content')}</label>
             <textarea
               name="content"
               required
@@ -426,7 +429,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Gambar Artikel</label>
+            <label className="block text-sm font-semibold mb-2">{t('article_image')}</label>
             {imagePreview && (
               <div className="mb-3">
                 <img 
@@ -434,13 +437,13 @@ function ArticleForm({ article, onClose, onSubmit }) {
                   alt="Preview" 
                   className="w-full max-w-sm rounded-lg border-2 border-gray-200"
                 />
-                <p className="text-xs text-gray-500 mt-1">Gambar saat ini</p>
+                <p className="text-xs text-gray-500 mt-1">{t('current_image')}</p>
               </div>
             )}
             <label className="cursor-pointer">
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition">
                 <div className="text-4xl mb-2">📷</div>
-                <p className="text-sm text-gray-600 font-medium">Klik untuk pilih gambar</p>
+                <p className="text-sm text-gray-600 font-medium">{t('click_select_image')}</p>
                 <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Max 2MB)</p>
               </div>
               <input
@@ -459,7 +462,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Tanggal Dibuat</label>
+            <label className="block text-sm font-semibold mb-2">{t('created_date')}</label>
             <input
               type="datetime-local"
               value={formData.created_at}
@@ -467,11 +470,11 @@ function ArticleForm({ article, onClose, onSubmit }) {
               disabled
               readOnly
             />
-            <p className="text-xs text-gray-500 mt-1">Tanggal pembuatan artikel (otomatis)</p>
+            <p className="text-xs text-gray-500 mt-1">{t('creation_date_auto')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Tanggal Publikasi</label>
+            <label className="block text-sm font-semibold mb-2">{t('publish_date')}</label>
             <input
               type="datetime-local"
               name="published_at"
@@ -479,7 +482,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
               onChange={(e) => setFormData(prev => ({ ...prev, published_at: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
               className="w-full border px-3 py-2 rounded"
             />
-            <p className="text-xs text-gray-500 mt-1">Kosongkan untuk menyimpan sebagai draft</p>
+            <p className="text-xs text-gray-500 mt-1">{t('empty_for_draft')}</p>
           </div>
 
           <div className="flex gap-3 pt-4 border-t border-gray-200">
@@ -488,7 +491,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
               onClick={onClose}
               className="flex-1 bg-gray-300 py-2 rounded"
             >
-              Batal
+              {t('cancel')}
             </button>
 
             <button
@@ -496,7 +499,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
               className="flex-1 bg-blue-500 text-white py-2 rounded"
               disabled={loading}
             >
-              {loading ? '⏳ Menyimpan...' : '💾 Simpan Artikel'}
+              {loading ? `⏳ ${t('saving')}` : `💾 ${t('save_article')}`}
             </button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useLanguage } from '../contexts/LanguageContext'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const validateName = (name) => {
     const nameRegex = /^[a-zA-Z\s]+$/
@@ -115,14 +117,14 @@ function Register() {
           onClick={() => navigate("/")}
           className="absolute top-4 left-4 text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1 transition"
         >
-          ← Kembali
+          ← {t('back_to_home')}
         </button>
 
         {/* Brand */}
         <div className="text-center mb-6 mt-4">
           <h1 className="text-3xl font-extrabold text-green-700">EcoCare</h1>
           <p className="text-gray-500 mt-1">
-            Daftar untuk mulai peduli lingkungan 🌱
+            {t('register_subtitle')} 🌱
           </p>
         </div>
 
@@ -131,11 +133,11 @@ function Register() {
           {/* Nama */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nama Lengkap
+              {t('full_name')}
             </label>
             <input
               type="text"
-              placeholder="Nama lengkap kamu"
+              placeholder={t('name_placeholder')}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
                 errors.name 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
@@ -153,11 +155,11 @@ function Register() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              {t('email')}
             </label>
             <input
               type="email"
-              placeholder="contoh@email.com"
+              placeholder={t('email_placeholder')}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
                 errors.email 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
@@ -175,12 +177,12 @@ function Register() {
           {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('password')}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Masukkan password (min. 6 karakter)"
+                placeholder={t('password_min_6')}
                 className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition ${
                   errors.password 
                     ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
@@ -206,12 +208,12 @@ function Register() {
           {/* Konfirmasi Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Konfirmasi Password
+              {t('password_confirmation')}
             </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Ulangi password"
+                placeholder={t('password_confirmation_placeholder')}
                 className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition ${
                   errors.confirmPassword 
                     ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
@@ -239,18 +241,18 @@ function Register() {
             type="submit"
             className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 active:scale-95 transition duration-150"
           >
-            Daftar
+            {t('register_button')}
           </button>
         </form>
 
         {/* Login */}
         <p className="text-center mt-6 text-gray-600 text-sm">
-          Sudah punya akun?{" "}
+          {t('already_have_account')}{" "}
           <Link
             to="/login"
             className="text-green-600 font-semibold hover:underline"
           >
-            Masuk
+            {t('login_here')}
           </Link>
         </p>
       </div>

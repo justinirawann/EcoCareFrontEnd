@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function MyReports() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   useEffect(() => {
     fetchMyReports()
@@ -29,32 +31,32 @@ function MyReports() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Menunggu" },
-      verified: { bg: "bg-blue-100", text: "text-blue-800", label: "Diverifikasi" },
-      completed: { bg: "bg-green-100", text: "text-green-800", label: "Selesai" },
-      rejected: { bg: "bg-red-100", text: "text-red-800", label: "Ditolak" },
+      pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: t('status_pending') },
+      verified: { bg: "bg-blue-100", text: "text-blue-800", label: t('status_verified') },
+      completed: { bg: "bg-green-100", text: "text-green-800", label: t('status_completed') },
+      rejected: { bg: "bg-red-100", text: "text-red-800", label: t('status_rejected') },
     }
     return badges[status] || { bg: "bg-gray-100", text: "text-gray-800", label: status }
   }
 
-  if (loading) return <div className="min-h-screen bg-green-50 p-6">Loading...</div>
+  if (loading) return <div className="min-h-screen bg-green-50 p-6">{t('loading')}...</div>
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-green-700">Laporan Saya</h1>
+          <h1 className="text-3xl font-bold text-green-700">{t('my_reports_title')}</h1>
           <button
             onClick={() => navigate("/dashboard")}
             className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
           >
-            Kembali
+            {t('back')}
           </button>
         </div>
 
         {reports.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-500">Belum ada laporan</p>
+            <p className="text-gray-500">{t('no_reports_yet')}</p>
           </div>
         ) : (
           <div className="grid gap-4">
@@ -74,11 +76,11 @@ function MyReports() {
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">📍 Lokasi:</span>
+                      <span className="text-gray-500">📍 {t('location_label')}</span>
                       <p className="font-medium">{report.location}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">📅 Tanggal:</span>
+                      <span className="text-gray-500">📅 {t('date_label')}</span>
                       <p className="font-medium">{new Date(report.created_at).toLocaleDateString('id-ID')}</p>
                     </div>
                   </div>
@@ -87,7 +89,7 @@ function MyReports() {
                     <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-yellow-800 mb-1">💬 Catatan dari Admin:</p>
+                          <p className="text-sm font-semibold text-yellow-800 mb-1">💬 {t('admin_notes')}</p>
                           <p className="text-sm text-yellow-700">{report.admin_notes}</p>
                         </div>
                         {report.status === 'pending' && (
@@ -95,7 +97,7 @@ function MyReports() {
                             onClick={() => navigate(`/dashboard/edit-report/${report.id}`)}
                             className="ml-4 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 text-sm font-semibold"
                           >
-                            Edit Laporan
+                            {t('edit_report')}
                           </button>
                         )}
                       </div>

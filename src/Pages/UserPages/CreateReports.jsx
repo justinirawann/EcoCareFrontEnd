@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function CreateReports() {
   const [title, setTitle] = useState("")
@@ -9,6 +10,7 @@ function CreateReports() {
   const [photoPreview, setPhotoPreview] = useState(null)
 
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -65,7 +67,7 @@ function CreateReports() {
             </svg>
           </button>
           <h1 className="text-3xl font-extrabold text-green-700 flex-1 text-center">
-            Buat Laporan Sampah ♻️
+            {t('create_waste_report')} ♻️
           </h1>
         </div>
 
@@ -73,10 +75,10 @@ function CreateReports() {
 
           {/* Judul */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('title')}</label>
             <input
               type="text"
-              placeholder="Misal: Sampah menumpuk..."
+              placeholder={t('title_placeholder')}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -86,10 +88,10 @@ function CreateReports() {
 
           {/* Lokasi */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')}</label>
             <input
               type="text"
-              placeholder="Misal: Jl. Melati No. 20"
+              placeholder={t('location_placeholder')}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -99,9 +101,9 @@ function CreateReports() {
 
           {/* Deskripsi */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')}</label>
             <textarea
-              placeholder="Ceritakan kondisi sampah..."
+              placeholder={t('description_placeholder')}
               className="w-full px-4 py-3 border rounded-xl min-h-[100px] focus:ring-2 focus:ring-green-500"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -110,7 +112,7 @@ function CreateReports() {
 
           {/* Foto */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('photo')}</label>
             {photoPreview && (
               <div className="mb-3">
                 <img src={photoPreview} alt="Preview" className="w-full max-w-sm rounded-lg border-2 border-green-200" />
@@ -120,8 +122,8 @@ function CreateReports() {
             <label className="cursor-pointer">
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition">
                 <div className="text-4xl mb-2">📷</div>
-                <p className="text-sm text-gray-600 font-medium">Klik untuk pilih foto</p>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Max 2MB)</p>
+                <p className="text-sm text-gray-600 font-medium">{t('click_to_select_photo')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('photo_format_info')}</p>
               </div>
               <input
                 type="file"
@@ -145,13 +147,13 @@ function CreateReports() {
               onClick={() => navigate("/dashboard")}
               className="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-lg hover:bg-gray-600"
             >
-              Batal
+              {t('cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-green-700"
             >
-              Kirim Laporan
+              {t('send_report')}
             </button>
           </div>
         </form>

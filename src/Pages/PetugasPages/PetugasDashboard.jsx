@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import PetugasProfileCheck from "../../middleware/PetugasProfileCheck"
+import { useLanguage } from '../../contexts/LanguageContext'
+import LanguageSwitcher from '../../components/LanguageSwitcher'
 
 function PetugasDashboard() {
   const [user, setUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
@@ -26,8 +29,9 @@ function PetugasDashboard() {
         {/* Header */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-blue-700">🚛 EcoCare Petugas</h1>
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-blue-700">🚛 {t('petugas_dashboard_title')}</h1>
+              <LanguageSwitcher />
             </div>
             
             {user && (
@@ -60,7 +64,7 @@ function PetugasDashboard() {
                       <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      Edit Profile
+                      {t('edit_profile')}
                     </Link>
                     <hr className="my-1" />
                     <button
@@ -70,7 +74,7 @@ function PetugasDashboard() {
                       <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Logout
+                      {t('logout')}
                     </button>
                   </div>
                 )}
@@ -84,19 +88,19 @@ function PetugasDashboard() {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-3xl font-bold mb-2">Dashboard Petugas 👷</h2>
-                <p className="text-blue-100">Kelola tugas pengangkutan sampah dan laporan dengan efisien</p>
+                <h2 className="text-3xl font-bold mb-2">{t('petugas_dashboard')} 👷</h2>
+                <p className="text-blue-100">{t('manage_waste_transport')}</p>
               </div>
               <div className="text-right">
-                <p className="text-blue-100 text-sm">Halo, {user?.name}! 👋</p>
-                <p className="text-blue-200 text-xs">Petugas Lapangan EcoCare</p>
+                <p className="text-blue-100 text-sm">{t('hello_user')}, {user?.name}! 👋</p>
+                <p className="text-blue-200 text-xs">{t('field_officer_ecocare')}</p>
               </div>
             </div>
           </div>
 
           {/* Main Features */}
           <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Tugas Utama</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">{t('main_tasks')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Link 
                 to="/petugas/report-tasks"
@@ -105,9 +109,9 @@ function PetugasDashboard() {
                 <div className="flex items-start gap-4">
                   <div className="text-5xl">📋</div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">Tugas Laporan</h3>
-                    <p className="text-gray-600 text-sm">Kelola laporan sampah yang ditugaskan dan status pembayaran</p>
-                    <span className="inline-block mt-3 text-blue-600 font-semibold text-sm">→ Lihat Tugas</span>
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">{t('report_tasks')}</h3>
+                    <p className="text-gray-600 text-sm">{t('report_tasks_desc')}</p>
+                    <span className="inline-block mt-3 text-blue-600 font-semibold text-sm">→ {t('view_tasks')}</span>
                   </div>
                 </div>
               </Link>
@@ -119,9 +123,9 @@ function PetugasDashboard() {
                 <div className="flex items-start gap-4">
                   <div className="text-5xl">♻️</div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">Tugas Daur Ulang</h3>
-                    <p className="text-gray-600 text-sm">Kelola penjemputan sampah daur ulang yang ditugaskan</p>
-                    <span className="inline-block mt-3 text-green-600 font-semibold text-sm">→ Lihat Tugas</span>
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">{t('recycling_tasks')}</h3>
+                    <p className="text-gray-600 text-sm">{t('recycling_tasks_desc')}</p>
+                    <span className="inline-block mt-3 text-green-600 font-semibold text-sm">→ {t('view_tasks')}</span>
                   </div>
                 </div>
               </Link>
@@ -130,8 +134,8 @@ function PetugasDashboard() {
 
           {/* Info Box */}
           <div className="mt-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
-            <h4 className="font-bold text-blue-900 mb-2">💡 Info Petugas</h4>
-            <p className="text-blue-800 text-sm">Pastikan untuk selalu update status laporan setelah menyelesaikan tugas pengangkutan sampah!</p>
+            <h4 className="font-bold text-blue-900 mb-2">💡 {t('officer_info')}</h4>
+            <p className="text-blue-800 text-sm">{t('update_report_status_tip')}</p>
           </div>
         </div>
       </div>

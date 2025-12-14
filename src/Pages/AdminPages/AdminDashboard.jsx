@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { api } from "../../api/api"
+import { useLanguage } from '../../contexts/LanguageContext'
+import LanguageSwitcher from '../../components/LanguageSwitcher'
 
 function AdminDashboard() {
   const [user, setUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null")
@@ -25,8 +28,9 @@ function AdminDashboard() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-red-700">🏛️ EcoCare Admin</h1>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-red-700">🏛️ {t('admin_dashboard_title')}</h1>
+            <LanguageSwitcher />
           </div>
           
           {user && (
@@ -59,7 +63,7 @@ function AdminDashboard() {
                     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    Edit Profile
+                    {t('edit_profile')}
                   </Link>
                   <hr className="my-1" />
                   <button
@@ -69,7 +73,7 @@ function AdminDashboard() {
                     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    Logout
+                    {t('logout')}
                   </button>
                 </div>
               )}
@@ -83,12 +87,12 @@ function AdminDashboard() {
         <div className="bg-gradient-to-r from-red-600 to-pink-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Dashboard Admin 🏛️</h2>
-              <p className="text-red-100">Kelola sistem EcoCare dengan kontrol penuh</p>
+              <h2 className="text-3xl font-bold mb-2">{t('admin_dashboard')} 🏛️</h2>
+              <p className="text-red-100">{t('manage_ecocare_system')}</p>
             </div>
             <div className="text-right">
-              <p className="text-red-100 text-sm">Halo, {user?.name}! 👋</p>
-              <p className="text-red-200 text-xs">Administrator EcoCare</p>
+              <p className="text-red-100 text-sm">{t('hello_user')}, {user?.name}! 👋</p>
+              <p className="text-red-200 text-xs">{t('administrator_ecocare')}</p>
             </div>
           </div>
         </div>
@@ -98,9 +102,9 @@ function AdminDashboard() {
             onClick={() => navigate("/admin/reports")}
             className="p-6 border rounded-xl bg-green-100 cursor-pointer hover:bg-green-200 transition"
           >
-            <h3 className="text-lg font-semibold text-green-700">📝 Verifikasi Laporan</h3>
+            <h3 className="text-lg font-semibold text-green-700">📝 {t('verify_reports')}</h3>
             <p className="text-gray-700 mt-1">
-              Kelola laporan sampah dari masyarakat.
+              {t('verify_reports_desc')}
             </p>
           </div>
 
@@ -108,9 +112,9 @@ function AdminDashboard() {
             onClick={() => navigate("/admin/recycling")}
             className="p-6 border rounded-xl bg-blue-100 cursor-pointer hover:bg-blue-200 transition"
           >
-            <h3 className="text-lg font-semibold text-blue-700">♻️ Kelola Daur Ulang</h3>
+            <h3 className="text-lg font-semibold text-blue-700">♻️ {t('manage_recycling')}</h3>
             <p className="text-gray-700 mt-1">
-              Review pesanan daur ulang dan tentukan harga.
+              {t('manage_recycling_desc')}
             </p>
           </div>
 
@@ -122,9 +126,9 @@ function AdminDashboard() {
             onClick={() => navigate("/admin/articles")}
             className="p-6 border rounded-xl bg-red-100 cursor-pointer hover:bg-red-200 transition"
           >
-            <h3 className="text-lg font-semibold text-red-700">📰 Kelola Artikel</h3>
+            <h3 className="text-lg font-semibold text-red-700">📰 {t('manage_articles')}</h3>
             <p className="text-gray-700 mt-1">
-              Buat, edit, dan hapus artikel edukasi.
+              {t('manage_articles_desc')}
             </p>
           </div>
 
@@ -132,9 +136,9 @@ function AdminDashboard() {
             onClick={() => navigate("/admin/users")}
             className="p-6 border rounded-xl bg-indigo-100 cursor-pointer hover:bg-indigo-200 transition"
           >
-            <h3 className="text-lg font-semibold text-indigo-700">👥 User Management</h3>
+            <h3 className="text-lg font-semibold text-indigo-700">👥 {t('user_management')}</h3>
             <p className="text-gray-700 mt-1">
-              Kelola user dan petugas dengan password default.
+              {t('user_management_desc')}
             </p>
           </div>
         </div>

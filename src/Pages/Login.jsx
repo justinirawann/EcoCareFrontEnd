@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useLanguage } from '../contexts/LanguageContext'
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" })
@@ -7,6 +8,13 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+  const { t, loading: langLoading, error: langError, translations } = useLanguage()
+  
+  // Debug: log translation status
+  console.log('Login page - Language loading:', langLoading)
+  console.log('Login page - Language error:', langError)
+  console.log('Login page - Translations count:', Object.keys(translations).length)
+  console.log('Login page - Sample translation (email):', t('email'))
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -96,14 +104,14 @@ function Login() {
           onClick={() => navigate("/")}
           className="absolute top-4 left-4 text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1 transition"
         >
-          ← Kembali
+          ← {t('back_to_home')}
         </button>
 
         {/* Logo / Brand */}
         <div className="text-center mb-6 mt-4">
           <h1 className="text-3xl font-extrabold text-green-700">EcoCare</h1>
           <p className="text-gray-500 mt-1">
-            Masuk untuk lanjutkan peduli lingkungan 🌱
+            {t('login_subtitle')} 🌱
           </p>
         </div>
 
@@ -112,11 +120,11 @@ function Login() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              {t('email')}
             </label>
             <input
               type="email"
-              placeholder="contoh@email.com"
+              placeholder={t('email_placeholder')}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition ${
                 errors.email 
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
@@ -134,12 +142,12 @@ function Login() {
           {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('password')}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Masukkan password"
+                placeholder={t('password_placeholder')}
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
@@ -165,27 +173,28 @@ function Login() {
               className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
             />
             <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
-              Ingat saya
+              {t('remember_me')}
             </label>
           </div>
 
           {/* Button */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 active:scale-95 transition duration-150"
+            disabled={langLoading}
+            className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 active:scale-95 transition duration-150 disabled:opacity-50"
           >
-            Masuk
+            {langLoading ? t('loading') : t('login_button')}
           </button>
         </form>
 
         {/* Register */}
         <p className="text-center mt-6 text-gray-600 text-sm">
-          Belum punya akun?{" "}
+          {t('no_account')}{" "}
           <Link
             to="/register"
             className="text-green-600 font-semibold hover:underline"
           >
-            Daftar Sekarang
+            {t('register_now')}
           </Link>
         </p>
       </div>

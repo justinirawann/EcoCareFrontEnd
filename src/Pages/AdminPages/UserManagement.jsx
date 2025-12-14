@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -9,6 +10,7 @@ export default function UserManagement() {
   const [success, setSuccess] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchUsers();
@@ -27,7 +29,7 @@ export default function UserManagement() {
       setUsers(data);
       setError('');
     } catch (err) {
-      setError('Gagal memuat data user');
+      setError(t('failed_load_users'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -35,7 +37,7 @@ export default function UserManagement() {
   };
 
   const handleDelete = async (userId) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus user ini?')) return;
+    if (!window.confirm(t('confirm_delete_user'))) return;
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -46,16 +48,16 @@ export default function UserManagement() {
 
       if (!response.ok) throw new Error('Delete failed');
 
-      setSuccess('User berhasil dihapus');
+      setSuccess(t('user_deleted'));
       fetchUsers();
     } catch (err) {
-      setError('Gagal menghapus user');
+      setError(t('failed_delete_user'));
       console.error(err);
     }
   };
 
   const handleResetPassword = async (userId) => {
-    if (!window.confirm('Reset password ke default?')) return;
+    if (!window.confirm(t('confirm_reset_password'))) return;
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -67,9 +69,9 @@ export default function UserManagement() {
       if (!response.ok) throw new Error('Reset failed');
 
       const data = await response.json();
-      setSuccess(`Password direset ke: ${data.default_password}`);
+      setSuccess(`${t('password_reset')} ${data.default_password}`);
     } catch (err) {
-      setError('Gagal reset password');
+      setError(t('failed_reset_password'));
       console.error(err);
     }
   };
@@ -102,16 +104,16 @@ export default function UserManagement() {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                <span className="hidden sm:inline">Kembali</span>
+                <span className="hidden sm:inline">{t('back')}</span>
               </button>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">👥 User Management</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">👥 {t('user_management_title')}</h1>
             </div>
             <button
               onClick={() => setShowForm(true)}
               className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
             >
-              <span className="sm:hidden">+ Tambah</span>
-              <span className="hidden sm:inline">+ Tambah User</span>
+              <span className="sm:hidden">{t('add_user_short')}</span>
+              <span className="hidden sm:inline">{t('add_user')}</span>
             </button>
           </div>
         </div>
@@ -130,13 +132,13 @@ export default function UserManagement() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600 font-medium">Loading...</p>
+            <p className="mt-4 text-gray-600 font-medium">{t('loading')}</p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             {users.length === 0 ? (
               <div className="p-12 text-center">
-                <p className="text-gray-500 text-lg">Belum ada user.</p>
+                <p className="text-gray-500 text-lg">{t('no_users_yet')}</p>
               </div>
             ) : (
               <>
@@ -166,20 +168,20 @@ export default function UserManagement() {
                         onClick={() => handleEdit(user)}
                         className="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm"
                       >
-                        Edit
+                        {t('edit')}
                       </button>
                       <button
                         onClick={() => handleResetPassword(user.id)}
                         className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded text-sm"
                       >
-                        Reset
+                        {t('reset')}
                       </button>
                       {user.email !== 'admin@ecocare.com' && (
                         <button
                           onClick={() => handleDelete(user.id)}
                           className="flex-1 bg-red-500 text-white px-3 py-2 rounded text-sm"
                         >
-                          Hapus
+                          {t('delete')}
                         </button>
                       )}
                     </div>
@@ -192,11 +194,11 @@ export default function UserManagement() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('user')}</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('email')}</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('role')}</th>
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('contact')}</th>
+                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -230,20 +232,20 @@ export default function UserManagement() {
                               onClick={() => handleEdit(user)}
                               className="text-blue-600 hover:text-blue-900 text-xs lg:text-sm"
                             >
-                              Edit
+                              {t('edit')}
                             </button>
                             <button
                               onClick={() => handleResetPassword(user.id)}
                               className="text-yellow-600 hover:text-yellow-900 text-xs lg:text-sm"
                             >
-                              Reset
+                              {t('reset')}
                             </button>
                             {user.email !== 'admin@ecocare.com' && (
                               <button
                                 onClick={() => handleDelete(user.id)}
                                 className="text-red-600 hover:text-red-900 text-xs lg:text-sm"
                               >
-                                Hapus
+                                {t('delete')}
                               </button>
                             )}
                           </div>
@@ -271,6 +273,7 @@ export default function UserManagement() {
 }
 
 function UserForm({ user, onClose, onSubmit }) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState(
     user ? {
       name: user.name || '',
@@ -334,7 +337,7 @@ function UserForm({ user, onClose, onSubmit }) {
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
-            {user ? 'Edit User' : 'Tambah User'}
+            {user ? t('edit_user') : t('add_user_title')}
           </h2>
 
           {error && (
@@ -345,7 +348,7 @@ function UserForm({ user, onClose, onSubmit }) {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('name')}</label>
               <input
                 type="text"
                 name="name"
@@ -357,7 +360,7 @@ function UserForm({ user, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
               <input
                 type="email"
                 name="email"
@@ -369,7 +372,7 @@ function UserForm({ user, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone')}</label>
               <input
                 type="text"
                 name="phone"
@@ -381,7 +384,7 @@ function UserForm({ user, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('address')}</label>
               <textarea
                 name="address"
                 value={formData.address}
@@ -393,7 +396,7 @@ function UserForm({ user, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('role')}</label>
               {user ? (
                 <input
                   type="text"
@@ -420,7 +423,7 @@ function UserForm({ user, onClose, onSubmit }) {
             {!user && (
               <div className="bg-blue-50 p-3 rounded-md">
                 <p className="text-sm text-blue-700">
-                  Password default: <strong>User = 12345678</strong>, <strong>Petugas = petugas123</strong>, <strong>Admin = admin123</strong>
+                  {t('default_password_info')}
                 </p>
               </div>
             )}
@@ -431,14 +434,14 @@ function UserForm({ user, onClose, onSubmit }) {
                 onClick={onClose}
                 className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
               >
-                Batal
+                {t('cancel')}
               </button>
               <button
                 type="submit"
                 disabled={loading}
                 className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
               >
-                {loading ? 'Menyimpan...' : user ? 'Update' : 'Simpan'}
+                {loading ? t('saving') : user ? t('update') : t('save')}
               </button>
             </div>
           </form>

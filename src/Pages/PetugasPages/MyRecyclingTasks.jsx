@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function MyRecyclingTasks() {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showPhotoModal, setShowPhotoModal] = useState(false)
+  const [selectedPhoto, setSelectedPhoto] = useState('')
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   useEffect(() => {
     fetchTasks()
@@ -45,10 +49,10 @@ function MyRecyclingTasks() {
 
       if (!response.ok) throw new Error('Failed to update payment')
 
-      setSuccess(`Status pembayaran berhasil diubah ke ${status === 'paid' ? 'Lunas' : 'Belum Bayar'}`)
+      setSuccess(`${t('payment_status_updated')} ${status === 'paid' ? t('paid') : t('unpaid')}`)
       fetchTasks()
     } catch (err) {
-      setError('Gagal update status pembayaran')
+      setError(t('failed_update_payment'))
       console.error(err)
     }
   }
@@ -66,11 +70,11 @@ function MyRecyclingTasks() {
       })
 
       if (response.ok) {
-        setSuccess("Pesanan berhasil diselesaikan!")
+        setSuccess(t('order_completed'))
         fetchTasks()
       }
     } catch (error) {
-      setError("Gagal menyelesaikan pesanan")
+      setError(t('failed_complete_order'))
       console.error(error)
     }
   }
@@ -88,7 +92,7 @@ function MyRecyclingTasks() {
       <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Memuat tugas...</p>
+          <p className="text-gray-600">{t('loading_tasks')}</p>
         </div>
       </div>
     )
@@ -105,9 +109,9 @@ function MyRecyclingTasks() {
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Kembali
+            {t('back')}
           </button>
-          <h1 className="text-3xl font-bold text-blue-700">Tugas Penjemputan Daur Ulang</h1>
+          <h1 className="text-3xl font-bold text-blue-700">{t('recycling_pickup_tasks')}</h1>
         </div>
 
         {error && (
@@ -124,8 +128,8 @@ function MyRecyclingTasks() {
         {tasks.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-12 text-center">
             <div className="text-6xl mb-4">📦</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">Tidak Ada Tugas</h3>
-            <p className="text-gray-500">Anda belum memiliki tugas penjemputan daur ulang</p>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('no_tasks')}</h3>
+            <p className="text-gray-500">{t('no_recycling_tasks')}</p>
           </div>
         ) : (
           <div className="grid gap-6">
@@ -147,20 +151,24 @@ function MyRecyclingTasks() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   {task.image && (
                     <div>
-                      <p className="text-sm text-gray-500 mb-2">Foto Sampah</p>
+                      <p className="text-sm text-gray-500 mb-2">{t('waste_photo')}</p>
                       <img
                         src={`http://127.0.0.1:8000/storage/${task.image}`}
                         alt="Sampah"
-                        className="w-full h-32 object-cover rounded-lg"
+                        className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => {
+                          setSelectedPhoto(`http://127.0.0.1:8000/storage/${task.image}`);
+                          setShowPhotoModal(true);
+                        }}
                       />
                     </div>
                   )}
                   <div>
-                    <p className="text-sm text-gray-500">Deskripsi</p>
-                    <p className="text-gray-800">{task.description || 'Tidak ada deskripsi'}</p>
+                    <p className="text-sm text-gray-500">{t('description')}</p>
+                    <p className="text-gray-800">{task.description || t('no_description')}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Alamat Penjemputan</p>
+                    <p className="text-sm text-gray-500">{t('pickup_address')}</p>
                     <p className="text-gray-800 font-medium">{task.pickup_address}</p>
                   </div>
                 </div>
@@ -168,27 +176,27 @@ function MyRecyclingTasks() {
                 <div className="bg-green-50 p-4 rounded-lg mb-4">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
                     <div>
-                      <p className="text-sm text-gray-500">Harga per kg</p>
+                      <p className="text-sm text-gray-500">{t('price_per_kg')}</p>
                       <p className="font-semibold text-green-600">
                         Rp {Number(task.price_per_kg).toLocaleString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Berat</p>
+                      <p className="text-sm text-gray-500">{t('weight')}</p>
                       <p className="font-semibold">{task.weight} kg</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Total Nilai</p>
+                      <p className="text-sm text-gray-500">{t('total_value')}</p>
                       <p className="text-xl font-bold text-green-600">
                         Rp {Number(task.total_price).toLocaleString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Status Pembayaran</p>
+                      <p className="text-sm text-gray-500">{t('payment_status')}</p>
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         task.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}>
-                        {task.payment_status === 'paid' ? 'Lunas' : 'Belum Bayar'}
+                        {task.payment_status === 'paid' ? t('paid') : t('unpaid')}
                       </span>
                     </div>
                   </div>
@@ -196,7 +204,7 @@ function MyRecyclingTasks() {
 
                 {task.admin_notes && (
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                    <p className="text-sm text-gray-500">Catatan Admin</p>
+                    <p className="text-sm text-gray-500">{t('admin_notes')}</p>
                     <p className="text-blue-800">{task.admin_notes}</p>
                   </div>
                 )}
@@ -209,14 +217,14 @@ function MyRecyclingTasks() {
                           onClick={() => updatePaymentStatus(task.id, 'paid')}
                           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
                         >
-                          💰 Tandai Lunas
+                          {t('mark_paid_button')}
                         </button>
                       ) : (
                         <button
                           onClick={() => updatePaymentStatus(task.id, 'unpaid')}
                           className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 font-medium"
                         >
-                          ❌ Tandai Belum Bayar
+                          {t('mark_unpaid_button')}
                         </button>
                       )}
                       
@@ -225,7 +233,7 @@ function MyRecyclingTasks() {
                           onClick={() => handleComplete(task.id)}
                           className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
                         >
-                          ✅ Selesaikan Penjemputan
+                          {t('complete_pickup')}
                         </button>
                       )}
                     </div>
@@ -233,7 +241,7 @@ function MyRecyclingTasks() {
                     {task.payment_status === 'unpaid' && (
                       <div className="bg-yellow-50 p-3 rounded-lg">
                         <p className="text-sm text-yellow-700">
-                          ⚠️ Pastikan user sudah membayar sebelum menyelesaikan penjemputan
+                          ⚠️ {t('ensure_payment_tip')}
                         </p>
                       </div>
                     )}
@@ -243,16 +251,40 @@ function MyRecyclingTasks() {
                 {task.status === 'Selesai' && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-center text-gray-600 font-medium">
-                      ✅ Penjemputan telah selesai
+                      {t('pickup_completed')}
                     </p>
                   </div>
                 )}
 
                 <div className="text-sm text-gray-500 mt-4">
-                  Dibuat: {new Date(task.created_at).toLocaleDateString('id-ID')}
+                  {t('created')} {new Date(task.created_at).toLocaleDateString('id-ID')}
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Modal untuk melihat foto */}
+        {showPhotoModal && (
+          <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-full p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">Foto Sampah</h3>
+                <button
+                  onClick={() => setShowPhotoModal(false)}
+                  className="text-gray-500 hover:text-gray-700 p-1"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <img
+                src={selectedPhoto}
+                alt="Waste Photo"
+                className="max-w-full max-h-96 object-contain rounded-lg mx-auto block"
+              />
+            </div>
           </div>
         )}
       </div>

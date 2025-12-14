@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useLanguage } from '../../contexts/LanguageContext'
 
 function EditProfile() {
   const [formData, setFormData] = useState({
@@ -8,11 +9,59 @@ function EditProfile() {
     phone: "",
     address: "",
     password: "",
+    confirmPassword: "",
     image: null
   })
   const [imagePreview, setImagePreview] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [originalPassword, setOriginalPassword] = useState("")
   const navigate = useNavigate()
+  const { t } = useLanguage()
+
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/
+    return nameRegex.test(name) && name.trim().length >= 2
+  }
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9+\-\s()]+$/
+    return phoneRegex.test(phone) && phone.replace(/[^0-9]/g, '').length >= 10
+  }
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value })
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: "" })
+    }
+    
+    // Real-time validation
+    if (field === "name" && value && !validateName(value)) {
+      setErrors({ ...errors, name: "Nama hanya boleh berisi huruf dan spasi (min. 2 karakter)" })
+    }
+    
+    if (field === "email" && value && !validateEmail(value)) {
+      setErrors({ ...errors, email: "Format email tidak valid" })
+    }
+    
+    if (field === "phone" && value && !validatePhone(value)) {
+      setErrors({ ...errors, phone: "Nomor telepon hanya boleh berisi angka (min. 10 digit)" })
+    }
+    
+    if (field === "confirmPassword" && value && value !== formData.password) {
+      setErrors({ ...errors, confirmPassword: "Konfirmasi password tidak sama" })
+    }
+  }
 
   useEffect(() => {
     try {
@@ -40,6 +89,41 @@ function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Validate before submit
+    const newErrors = {}
+    
+    if (!validateName(formData.name)) {
+      newErrors.name = "Nama hanya boleh berisi huruf dan spasi (min. 2 karakter)"
+    }
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Format email tidak valid"
+    }
+    
+    if (formData.phone && !validatePhone(formData.phone)) {
+      newErrors.phone = "Nomor telepon hanya boleh berisi angka (min. 10 digit)"
+    }
+    
+    if (showPasswordForm) {
+      if (formData.password.length < 6) {
+        newErrors.password = "Password minimal 6 karakter"
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Konfirmasi password tidak sama"
+      }
+      
+      if (formData.password === originalPassword) {
+        newErrors.password = "Password tidak bisa sama seperti sebelumnya"
+      }
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+    
     setLoading(true)
 
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
@@ -50,7 +134,7 @@ function EditProfile() {
       formDataToSend.append('email', formData.email)
       formDataToSend.append('phone', formData.phone)
       formDataToSend.append('address', formData.address)
-      if (formData.password) {
+      if (showPasswordForm && formData.password) {
         formDataToSend.append('password', formData.password)
       }
       if (formData.image) {
@@ -103,7 +187,7 @@ function EditProfile() {
     <div className="min-h-screen bg-green-50 flex justify-center items-center p-6">
       <div className="bg-white w-full max-w-lg shadow-xl rounded-2xl p-8 border border-green-200">
         <h1 className="text-3xl font-extrabold text-green-700 text-center mb-6">
-          Edit Profile 👤
+          {t('edit_profile_user')} 👤
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -123,70 +207,150 @@ function EditProfile() {
                 onChange={handleImageChange}
                 className="hidden"
               />
-              📷 Pilih Foto Profile
+              📷 {t('choose_profile_photo')}
             </label>
           </div>
 
           {/* Nama */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('full_name_required')}</label>
             <input
               type="text"
-              placeholder="Nama lengkap"
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
+              placeholder={t('full_name_placeholder')}
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition ${
+                errors.name 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => handleInputChange("name", e.target.value)}
               required
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('email_required')}</label>
             <input
               type="email"
-              placeholder="email@example.com"
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
+              placeholder={t('email_placeholder')}
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition ${
+                errors.email 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone_number_required')}</label>
             <input
               type="text"
-              placeholder="Masukkan nomor telepon, Pastikan nomor telepon aktif."
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
+              placeholder={t('phone_placeholder')}
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition ${
+                errors.phone 
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+              }`}
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
             />
+            {errors.phone && (
+              <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+            )}
           </div>
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('address_required')}</label>
             <textarea
-              placeholder="Alamat lengkap, pastikan alamat sudah akurat."
+              placeholder={t('address_placeholder')}
               className="w-full px-4 py-3 border rounded-xl min-h-[80px] focus:ring-2 focus:ring-green-500"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             ></textarea>
           </div>
 
-          {/* Password */}
+          {/* Password Section */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-            <input
-              type="password"
-              placeholder="Kosongkan jika tidak ingin ubah password"
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <p className="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password</p>
+            <div className="flex justify-between items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPasswordForm(!showPasswordForm)
+                  if (!showPasswordForm) {
+                    setFormData({ ...formData, password: "", confirmPassword: "" })
+                    setErrors({ ...errors, password: "", confirmPassword: "" })
+                  }
+                }}
+                className="text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                {showPasswordForm ? t('cancel_change_password') : t('change_password')}
+              </button>
+            </div>
+            
+            {showPasswordForm && (
+              <div className="space-y-3">
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder={t('new_password_placeholder')}
+                    className={`w-full px-4 py-3 pr-12 border rounded-xl focus:ring-2 transition ${
+                      errors.password 
+                        ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                        : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+                    }`}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? "👁️" : "👁️🗨️"}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-xs">{errors.password}</p>
+                )}
+                
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder={t('confirm_new_password_placeholder')}
+                    className={`w-full px-4 py-3 pr-12 border rounded-xl focus:ring-2 transition ${
+                      errors.confirmPassword 
+                        ? "border-red-500 focus:ring-red-500 focus:border-red-500" 
+                        : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+                    }`}
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? "👁️" : "👁️🗨️"}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs">{errors.confirmPassword}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Submit */}
@@ -196,14 +360,14 @@ function EditProfile() {
               disabled={loading}
               className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-green-700 disabled:opacity-50"
             >
-              {loading ? "Menyimpan..." : "Simpan Profile"}
+              {loading ? t('saving') : t('save_profile')}
             </button>
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
               className="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-lg hover:bg-gray-600"
             >
-              Batal
+              {t('cancel')}
             </button>
           </div>
         </form>
