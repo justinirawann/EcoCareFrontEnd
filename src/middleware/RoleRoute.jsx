@@ -8,7 +8,14 @@ function RoleRoute({ children, allowedRoles = [] }) {
   const hasAccess = roles.some((role) => allowedRoles.includes(role))
 
   if (!hasAccess) {
-    return <Navigate to="/forbidden" />
+    // Redirect berdasarkan role yang ada
+    if (roles.includes('admin')) {
+      return <Navigate to="/admin/dashboard" />
+    } else if (roles.includes('petugas')) {
+      return <Navigate to="/petugas/dashboard" />
+    } else {
+      return <Navigate to="/dashboard" />
+    }
   }
 
   return children
