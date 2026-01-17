@@ -37,6 +37,9 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Login form submitted with method POST');
     
     // Validate before submit
     const newErrors = {}
@@ -55,7 +58,8 @@ function Login() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          "Accept": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
         },
         body: JSON.stringify(formData),
       });
