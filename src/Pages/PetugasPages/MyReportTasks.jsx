@@ -23,7 +23,7 @@ export default function MyReportTasks() {
   const fetchReports = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/petugas/report-tasks', {
+      const response = await fetch('https://ecocare-api.up.railway.app/api/petugas/report-tasks', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -43,7 +43,7 @@ export default function MyReportTasks() {
   const updatePaymentStatus = async (reportId, status) => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/petugas/reports/${reportId}/payment`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/petugas/reports/${reportId}/payment`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default function MyReportTasks() {
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/petugas/reports/${selectedReport.id}/fee`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/petugas/reports/${selectedReport.id}/fee`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default function MyReportTasks() {
   const completeReport = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/petugas/reports/${selectedReport.id}/complete`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/petugas/reports/${selectedReport.id}/complete`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -192,11 +192,11 @@ export default function MyReportTasks() {
                             <div className="text-sm text-gray-500">{report.location}</div>
                             {report.photo && (
                               <img
-                                src={`http://127.0.0.1:8000/storage/${report.photo}`}
+                                src={`https://ecocare-api.up.railway.app/storage/${report.photo}`}
                                 alt="Report"
                                 className="w-16 h-16 object-cover rounded mt-2 cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={() => {
-                                  setSelectedPhoto(`http://127.0.0.1:8000/storage/${report.photo}`);
+                                  setSelectedPhoto(`https://ecocare-api.up.railway.app/storage/${report.photo}`);
                                   setShowPhotoModal(true);
                                 }}
                               />

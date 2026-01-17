@@ -19,7 +19,7 @@ export default function UserManagement() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/admin/users', {
+      const response = await fetch('https://ecocare-api.up.railway.app/api/admin/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -41,7 +41,7 @@ export default function UserManagement() {
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/users/${userId}`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -61,7 +61,7 @@ export default function UserManagement() {
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/users/${userId}/reset-password`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/users/${userId}/reset-password`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -305,8 +305,8 @@ function UserForm({ user, onClose, onSubmit }) {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const url = user
-        ? `http://127.0.0.1:8000/api/admin/users/${user.id}`
-        : `http://127.0.0.1:8000/api/admin/users`;
+        ? `https://ecocare-api.up.railway.app/api/admin/users/${user.id}`
+        : `https://ecocare-api.up.railway.app/api/admin/users`;
       const method = user ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

@@ -76,7 +76,7 @@ function EditProfileAdmin() {
         image: null
       })
       if (savedUser.image) {
-        setImagePreview(`http://127.0.0.1:8000/storage/${savedUser.image}`)
+        setImagePreview(`https://ecocare-api.up.railway.app/storage/${savedUser.image}`)
       }
     }
   }, [])
@@ -153,7 +153,7 @@ function EditProfileAdmin() {
         formDataToSend.append('image', formData.image)
       }
 
-      const response = await fetch('http://127.0.0.1:8000/api/profile/update', {
+      const response = await fetch('https://ecocare-api.up.railway.app/api/profile/update', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

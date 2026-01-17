@@ -13,7 +13,7 @@ function ProfileCompleteCheck({ children }) {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token")
       
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/me", {
+        const response = await fetch("https://ecocare-api.up.railway.app/api/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

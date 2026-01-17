@@ -15,7 +15,7 @@ function MyRecyclingOrders() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/recycling/my-orders", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/recycling/my-orders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -111,7 +111,7 @@ function MyRecyclingOrders() {
                     <div>
                       <p className="text-sm text-gray-500 mb-2">{t('waste_photo_label')}</p>
                       <img
-                        src={`http://127.0.0.1:8000/storage/${order.image}`}
+                        src={`https://ecocare-api.up.railway.app/storage/${order.image}`}
                         alt="Sampah"
                         className="w-full h-32 object-cover rounded-lg"
                       />

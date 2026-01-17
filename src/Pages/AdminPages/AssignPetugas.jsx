@@ -16,12 +16,12 @@ function AssignPetugas() {
     
     try {
       // Fetch approved orders
-      const ordersResponse = await fetch("http://127.0.0.1:8000/api/admin/recycling", {
+      const ordersResponse = await fetch("https://ecocare-api.up.railway.app/api/admin/recycling", {
         headers: { Authorization: `Bearer ${token}` }
       })
       
       // Fetch petugas list
-      const petugasResponse = await fetch("http://127.0.0.1:8000/api/admin/petugas", {
+      const petugasResponse = await fetch("https://ecocare-api.up.railway.app/api/admin/petugas", {
         headers: { Authorization: `Bearer ${token}` }
       })
       
@@ -45,7 +45,7 @@ function AssignPetugas() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/recycling/${orderId}/assign`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/recycling/${orderId}/assign`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -16,7 +16,7 @@ function Dashboard() {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token")
       
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/me", {
+        const response = await fetch("https://ecocare-api.up.railway.app/api/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +84,7 @@ function Dashboard() {
                 className="flex items-center space-x-3 hover:bg-gray-50 rounded-full p-2 transition-colors"
               >
                 <img
-                  src={user?.image ? `http://127.0.0.1:8000/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=16a34a&color=fff&size=40`}
+                  src={user?.image ? `https://ecocare-api.up.railway.app/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=16a34a&color=fff&size=40`}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover border-2 border-green-300 shadow-sm"
                 />

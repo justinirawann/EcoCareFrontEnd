@@ -23,7 +23,7 @@ function PetugasDashboard() {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
       
       // Fetch pending reports
-      const reportsResponse = await fetch('http://127.0.0.1:8000/api/petugas/report-tasks', {
+      const reportsResponse = await fetch('https://ecocare-api.up.railway.app/api/petugas/report-tasks', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (reportsResponse.ok) {
@@ -33,7 +33,7 @@ function PetugasDashboard() {
       }
 
       // Fetch pending recycling tasks
-      const recyclingResponse = await fetch('http://127.0.0.1:8000/api/petugas/recycling-tasks', {
+      const recyclingResponse = await fetch('https://ecocare-api.up.railway.app/api/petugas/recycling-tasks', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (recyclingResponse.ok) {
@@ -75,7 +75,7 @@ function PetugasDashboard() {
                   className="flex items-center space-x-3 hover:bg-gray-50 rounded-full p-2 transition-colors"
                 >
                   <img
-                    src={user?.image ? `http://127.0.0.1:8000/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=1d4ed8&color=fff&size=40`}
+                    src={user?.image ? `https://ecocare-api.up.railway.app/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=1d4ed8&color=fff&size=40`}
                     alt="Profile"
                     className="w-10 h-10 rounded-full object-cover border-2 border-blue-300 shadow-sm"
                   />

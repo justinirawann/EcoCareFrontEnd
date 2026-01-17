@@ -22,7 +22,7 @@ export default function ManageArticles() {
       setLoading(true);
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-      const response = await fetch('http://127.0.0.1:8000/api/articles', {
+      const response = await fetch('https://ecocare-api.up.railway.app/api/articles', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,7 +54,7 @@ export default function ManageArticles() {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-      const response = await fetch(`http://127.0.0.1:8000/api/articles/${articleId}`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/articles/${articleId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -150,7 +150,7 @@ export default function ManageArticles() {
                     <div className="flex space-x-3">
                       {article.featured_image && (
                         <img
-                          src={`http://127.0.0.1:8000/storage/${article.featured_image}`}
+                          src={`https://ecocare-api.up.railway.app/storage/${article.featured_image}`}
                           alt={article.title}
                           className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                         />
@@ -209,7 +209,7 @@ export default function ManageArticles() {
                           <div className="flex items-start space-x-2 lg:space-x-4">
                             {article.featured_image && (
                               <img
-                                src={`http://127.0.0.1:8000/storage/${article.featured_image}`}
+                                src={`https://ecocare-api.up.railway.app/storage/${article.featured_image}`}
                                 alt={article.title}
                                 className="w-12 h-12 lg:w-16 lg:h-16 object-cover rounded-lg flex-shrink-0"
                               />
@@ -306,7 +306,7 @@ function ArticleForm({ article, onClose, onSubmit }) {
   );
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(
-    article?.featured_image ? `http://127.0.0.1:8000/storage/${article.featured_image}` : null
+    article?.featured_image ? `https://ecocare-api.up.railway.app/storage/${article.featured_image}` : null
   );
 
   const [loading, setLoading] = useState(false);
@@ -327,8 +327,8 @@ function ArticleForm({ article, onClose, onSubmit }) {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
       const url = article
-        ? `http://127.0.0.1:8000/api/articles/${article.id}`
-        : `http://127.0.0.1:8000/api/articles`;
+        ? `https://ecocare-api.up.railway.app/api/articles/${article.id}`
+        : `https://ecocare-api.up.railway.app/api/articles`;
 
       const method = article ? 'PUT' : 'POST';
 

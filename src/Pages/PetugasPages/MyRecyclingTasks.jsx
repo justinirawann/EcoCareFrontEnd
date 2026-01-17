@@ -20,7 +20,7 @@ function MyRecyclingTasks() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/petugas/recycling-tasks", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/petugas/recycling-tasks", {
         headers: { Authorization: `Bearer ${token}` }
       })
       
@@ -38,7 +38,7 @@ function MyRecyclingTasks() {
   const updatePaymentStatus = async (taskId, status) => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-      const response = await fetch(`http://127.0.0.1:8000/api/petugas/recycling/${taskId}/payment`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/petugas/recycling/${taskId}/payment`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ function MyRecyclingTasks() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/petugas/recycling/${taskId}/complete`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/petugas/recycling/${taskId}/complete`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -153,11 +153,11 @@ function MyRecyclingTasks() {
                     <div>
                       <p className="text-sm text-gray-500 mb-2">{t('waste_photo')}</p>
                       <img
-                        src={`http://127.0.0.1:8000/storage/${task.image}`}
+                        src={`https://ecocare-api.up.railway.app/storage/${task.image}`}
                         alt="Sampah"
                         className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => {
-                          setSelectedPhoto(`http://127.0.0.1:8000/storage/${task.image}`);
+                          setSelectedPhoto(`https://ecocare-api.up.railway.app/storage/${task.image}`);
                           setShowPhotoModal(true);
                         }}
                       />

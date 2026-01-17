@@ -23,7 +23,7 @@ function AdminDashboard() {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
       
       // Fetch pending reports
-      const reportsResponse = await fetch('http://127.0.0.1:8000/api/admin/reports', {
+      const reportsResponse = await fetch('https://ecocare-api.up.railway.app/api/admin/reports', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (reportsResponse.ok) {
@@ -33,7 +33,7 @@ function AdminDashboard() {
       }
 
       // Fetch pending recycling orders
-      const recyclingResponse = await fetch('http://127.0.0.1:8000/api/admin/recycling', {
+      const recyclingResponse = await fetch('https://ecocare-api.up.railway.app/api/admin/recycling', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (recyclingResponse.ok) {
@@ -74,7 +74,7 @@ function AdminDashboard() {
                 className="flex items-center space-x-3 hover:bg-gray-50 rounded-full p-2 transition-colors"
               >
                 <img
-                  src={user?.image ? `http://127.0.0.1:8000/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Admin')}&background=dc2626&color=fff&size=40`}
+                  src={user?.image ? `https://ecocare-api.up.railway.app/storage/${user.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Admin')}&background=dc2626&color=fff&size=40`}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover border-2 border-red-300 shadow-sm"
                 />

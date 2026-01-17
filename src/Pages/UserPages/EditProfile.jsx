@@ -77,7 +77,7 @@ function EditProfile() {
           image: null
         })
         if (savedUser.image) {
-          setImagePreview(`http://127.0.0.1:8000/storage/${savedUser.image}`)
+          setImagePreview(`https://ecocare-api.up.railway.app/storage/${savedUser.image}`)
         } else {
           setImagePreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(savedUser.name || 'User')}&background=16a34a&color=fff&size=200`)
         }
@@ -142,7 +142,7 @@ function EditProfile() {
       }
       formDataToSend.append('_method', 'PUT')
 
-      const response = await fetch("http://127.0.0.1:8000/api/profile/update", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/profile/update", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

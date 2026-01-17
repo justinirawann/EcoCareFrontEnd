@@ -15,7 +15,7 @@ function ArticleDetail() {
 
   const fetchArticle = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/articles/${id}`)
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/articles/${id}`)
       const data = await response.json()
       
       // Hanya tampilkan jika published
@@ -79,7 +79,7 @@ function ArticleDetail() {
           {/* Featured Image */}
           {article.featured_image && (
             <img
-              src={`http://127.0.0.1:8000/storage/${article.featured_image}`}
+              src={`https://ecocare-api.up.railway.app/storage/${article.featured_image}`}
               alt={article.title}
               className="w-full h-64 md:h-80 object-cover"
             />

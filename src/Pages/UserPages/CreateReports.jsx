@@ -29,7 +29,7 @@ function CreateReports() {
     if (photo) formData.append("photo", photo)
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/reports/create", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/reports/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

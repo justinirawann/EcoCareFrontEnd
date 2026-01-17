@@ -14,7 +14,7 @@ function Articles() {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/articles")
+      const response = await fetch("https://ecocare-api.up.railway.app/api/articles")
       const data = await response.json()
       
       // Filter hanya artikel yang published
@@ -68,7 +68,7 @@ function Articles() {
               >
                 {article.featured_image && (
                   <img
-                    src={`http://127.0.0.1:8000/storage/${article.featured_image}`}
+                    src={`https://ecocare-api.up.railway.app/storage/${article.featured_image}`}
                     alt={article.title}
                     className="w-full h-48 object-cover"
                   />

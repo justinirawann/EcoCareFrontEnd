@@ -29,7 +29,7 @@ function ManageReports() {
   const fetchReports = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/admin/reports", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/admin/reports", {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await response.json()
@@ -46,7 +46,7 @@ function ManageReports() {
   const fetchPetugas = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/admin/users", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await response.json()
@@ -63,7 +63,7 @@ function ManageReports() {
       const body = { status }
       if (notes) body.admin_notes = notes
       
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/reports/${id}/verify`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/reports/${id}/verify`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ function ManageReports() {
     try {
       const body = { status: "pending", admin_notes: notes }
       
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/reports/${id}/verify`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/reports/${id}/verify`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ function ManageReports() {
 
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/reports/${selectedReport.id}/assign-petugas`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/reports/${selectedReport.id}/assign-petugas`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -179,7 +179,7 @@ function ManageReports() {
   const handleDeleteReport = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/reports/${reportToDelete.id}`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/reports/${reportToDelete.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -290,7 +290,7 @@ function ManageReports() {
                 )}
                 {report.photo && (
                   <button
-                    onClick={() => openPhotoModal(`http://127.0.0.1:8000/storage/${report.photo}`, report.title)}
+                    onClick={() => openPhotoModal(`https://ecocare-api.up.railway.app/storage/${report.photo}`, report.title)}
                     className="flex-1 bg-gray-500 text-white px-3 py-2 rounded text-sm hover:bg-gray-600"
                   >
                     📷 {t('photo')}
@@ -376,7 +376,7 @@ function ManageReports() {
                         )}
                         {report.photo && (
                           <button
-                            onClick={() => openPhotoModal(`http://127.0.0.1:8000/storage/${report.photo}`, report.title)}
+                            onClick={() => openPhotoModal(`https://ecocare-api.up.railway.app/storage/${report.photo}`, report.title)}
                             className="text-blue-500 hover:text-blue-700 text-xs font-medium"
                           >
                             📷 {t('photo')}

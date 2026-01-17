@@ -15,7 +15,7 @@ function MyReports() {
   const fetchMyReports = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/reports/my-reports", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/reports/my-reports", {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await response.json()
@@ -107,7 +107,7 @@ function MyReports() {
                   {report.photo && (
                     <div className="mt-4">
                       <img
-                        src={`http://127.0.0.1:8000/storage/${report.photo}`}
+                        src={`https://ecocare-api.up.railway.app/storage/${report.photo}`}
                         alt={report.title}
                         className="w-full max-w-md rounded-lg"
                       />

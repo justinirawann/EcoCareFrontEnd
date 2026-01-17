@@ -19,7 +19,7 @@ function CreatePetugas() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/admin/create-petugas", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/admin/create-petugas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

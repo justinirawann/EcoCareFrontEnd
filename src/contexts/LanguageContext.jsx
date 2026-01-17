@@ -23,7 +23,7 @@ function LanguageProvider({ children }) {
     try {
       setError(null)
       console.log('Fetching translations for locale:', locale)
-      const response = await fetch(`http://127.0.0.1:8000/api/translations?locale=${locale}`)
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/translations?locale=${locale}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

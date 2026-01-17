@@ -26,10 +26,10 @@ function ManageRecycling() {
     
     try {
       const [ordersResponse, usersResponse] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/admin/recycling", {
+        fetch("https://ecocare-api.up.railway.app/api/admin/recycling", {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://127.0.0.1:8000/api/admin/users", {
+        fetch("https://ecocare-api.up.railway.app/api/admin/users", {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
@@ -52,7 +52,7 @@ function ManageRecycling() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/recycling/${orderId}/approve`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/recycling/${orderId}/approve`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ function ManageRecycling() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/recycling/${orderId}/reject`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/recycling/${orderId}/reject`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ function ManageRecycling() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/recycling/${orderId}/assign`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/recycling/${orderId}/assign`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -143,7 +143,7 @@ function ManageRecycling() {
   const handleDeleteOrder = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/recycling/${orderToDelete.id}`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/admin/recycling/${orderToDelete.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -217,7 +217,7 @@ function ManageRecycling() {
                   <div>
                     <p className="text-sm text-gray-500 mb-2">{t('waste_photo')}</p>
                     <img
-                      src={`http://127.0.0.1:8000/storage/${order.image}`}
+                      src={`https://ecocare-api.up.railway.app/storage/${order.image}`}
                       alt="Sampah"
                       className="w-full h-32 object-cover rounded-lg"
                     />

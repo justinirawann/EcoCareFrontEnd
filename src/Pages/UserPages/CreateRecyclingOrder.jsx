@@ -26,7 +26,7 @@ function CreateRecyclingOrder() {
     
     // Debug: Cek user role terlebih dahulu
     try {
-      const userResponse = await fetch("http://127.0.0.1:8000/api/me", {
+      const userResponse = await fetch("https://ecocare-api.up.railway.app/api/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
       const userData = await userResponse.json()
@@ -55,7 +55,7 @@ function CreateRecyclingOrder() {
         formDataToSend.append('image', formData.image)
       }
 
-      const response = await fetch("http://127.0.0.1:8000/api/recycling/create", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/recycling/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

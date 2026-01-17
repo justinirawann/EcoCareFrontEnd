@@ -23,7 +23,7 @@ function EditReport() {
   const fetchReport = async () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/reports/my-reports", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/reports/my-reports", {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await response.json()
@@ -61,7 +61,7 @@ function EditReport() {
     if (photo) formData.append("photo", photo)
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/reports/${id}/update`, {
+      const response = await fetch(`https://ecocare-api.up.railway.app/api/reports/${id}/update`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -153,7 +153,7 @@ function EditReport() {
             ) : currentPhoto && (
               <div className="mb-3">
                 <img 
-                  src={`http://127.0.0.1:8000/storage/${currentPhoto}`} 
+                  src={`https://ecocare-api.up.railway.app/storage/${currentPhoto}`} 
                   alt="Current" 
                   className="w-full max-w-sm rounded-lg border-2 border-gray-200"
                 />

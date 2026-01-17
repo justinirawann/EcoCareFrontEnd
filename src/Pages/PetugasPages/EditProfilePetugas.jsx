@@ -68,7 +68,7 @@ function EditProfile() {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token")
       
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/me", {
+        const response = await fetch("https://ecocare-api.up.railway.app/api/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -88,7 +88,7 @@ function EditProfile() {
           })
           
           if (userData.image) {
-            setImagePreview(`http://127.0.0.1:8000/storage/${userData.image}`)
+            setImagePreview(`https://ecocare-api.up.railway.app/storage/${userData.image}`)
           } else {
             setImagePreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'User')}&background=1d4ed8&color=fff&size=200`)
           }
@@ -155,7 +155,7 @@ function EditProfile() {
       }
       formDataToSend.append('_method', 'PUT')
 
-      const response = await fetch("http://127.0.0.1:8000/api/profile/update", {
+      const response = await fetch("https://ecocare-api.up.railway.app/api/profile/update", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
